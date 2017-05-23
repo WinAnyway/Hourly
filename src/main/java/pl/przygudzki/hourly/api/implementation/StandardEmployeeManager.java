@@ -1,5 +1,6 @@
-package pl.przygudzki.hourly.api;
+package pl.przygudzki.hourly.api.implementation;
 
+import pl.przygudzki.hourly.api.EmployeeManager;
 import pl.przygudzki.hourly.domain.Employee;
 import pl.przygudzki.hourly.domain.EmployeeRepository;
 import pl.przygudzki.hourly.domain.commands.CreateEmployeeCommand;
