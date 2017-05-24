@@ -1,9 +1,7 @@
 package pl.przygudzki.hourly.domain.shift;
 
-public class ShiftRepository {
+public interface ShiftRepository {
 
-	public void put(Shift shift) {
-
-	}
+	void put(Shift shift);
 
 }
