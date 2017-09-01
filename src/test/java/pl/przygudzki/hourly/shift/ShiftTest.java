@@ -1,9 +1,7 @@
-package pl.przygudzki.hourly.domain.shift;
+package pl.przygudzki.hourly.shift;
 
 import org.junit.Before;
 import org.junit.Test;
-import pl.przygudzki.hourly.domain.commands.CreateShiftCommand;
-import pl.przygudzki.hourly.domain.shift.Shift;
 
 import java.time.LocalDateTime;
 

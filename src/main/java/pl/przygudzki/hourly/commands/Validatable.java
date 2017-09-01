@@ -1,4 +1,4 @@
-package pl.przygudzki.hourly.domain.commands;
+package pl.przygudzki.hourly.commands;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,7 +11,7 @@ public interface Validatable {
 
 	void validate(ValidationErrors errors);
 
-	default boolean isEmpty(String s) {
+	default boolean isNullOrEmpty(String s) {
 		return s == null || s.trim().isEmpty();
 	}
 

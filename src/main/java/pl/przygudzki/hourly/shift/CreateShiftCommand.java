@@ -1,27 +1,17 @@
-package pl.przygudzki.hourly.domain.commands;
+package pl.przygudzki.hourly.shift;
+
+import lombok.Getter;
+import lombok.Setter;
+import pl.przygudzki.hourly.commands.Validatable;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 public class CreateShiftCommand implements Validatable {
 
 	private LocalDateTime startDate;
 	private LocalDateTime endDate;
-
-	public LocalDateTime getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(LocalDateTime startDate) {
-		this.startDate = startDate;
-	}
-
-	public LocalDateTime getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(LocalDateTime endDate) {
-		this.endDate = endDate;
-	}
 
 	@Override
 	public void validate(ValidationErrors errors) {

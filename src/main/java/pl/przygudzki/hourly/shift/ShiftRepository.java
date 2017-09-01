@@ -1,4 +1,4 @@
-package pl.przygudzki.hourly.domain.shift;
+package pl.przygudzki.hourly.shift;
 
 public interface ShiftRepository {
 

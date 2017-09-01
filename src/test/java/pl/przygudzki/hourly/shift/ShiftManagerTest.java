@@ -1,10 +1,7 @@
-package pl.przygudzki.hourly.api;
+package pl.przygudzki.hourly.shift;
 
 import org.junit.Before;
 import org.junit.Test;
-import pl.przygudzki.hourly.api.implementation.StandardShiftManager;
-import pl.przygudzki.hourly.domain.commands.CreateShiftCommand;
-import pl.przygudzki.hourly.domain.shift.ShiftRepository;
 
 import java.time.LocalDateTime;
 

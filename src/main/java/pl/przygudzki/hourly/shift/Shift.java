@@ -1,15 +1,10 @@
-package pl.przygudzki.hourly.domain.shift;
+package pl.przygudzki.hourly.shift;
 
-import pl.przygudzki.hourly.domain.commands.CreateShiftCommand;
-
-import javax.persistence.EmbeddedId;
 import java.time.LocalDateTime;
 
-public class Shift {
+class Shift {
 
-	@EmbeddedId
 	private ShiftId id;
-
 	private LocalDateTime startDate;
 	private LocalDateTime endDate;
 
@@ -19,7 +14,7 @@ public class Shift {
 		this.endDate = endDate;
 	}
 
-	public static Shift create(CreateShiftCommand command) {
+	static Shift create(CreateShiftCommand command) {
 		ShiftId id = ShiftId.generate();
 		LocalDateTime startDate = command.getStartDate();
 		LocalDateTime endDate = command.getEndDate();
@@ -31,5 +26,4 @@ public class Shift {
 	ShiftId getId() {
 		return id;
 	}
-
 }

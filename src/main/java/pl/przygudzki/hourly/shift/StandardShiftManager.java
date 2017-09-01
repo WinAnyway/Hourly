@@ -1,9 +1,4 @@
-package pl.przygudzki.hourly.api.implementation;
-
-import pl.przygudzki.hourly.api.ShiftManager;
-import pl.przygudzki.hourly.domain.commands.CreateShiftCommand;
-import pl.przygudzki.hourly.domain.shift.Shift;
-import pl.przygudzki.hourly.domain.shift.ShiftRepository;
+package pl.przygudzki.hourly.shift;
 
 public class StandardShiftManager implements ShiftManager {
 
