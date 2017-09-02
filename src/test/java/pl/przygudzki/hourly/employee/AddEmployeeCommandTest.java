@@ -6,13 +6,13 @@ import pl.przygudzki.hourly.commons.commands.Validatable;
 
 import static pl.przygudzki.hourly.commons.commands.ValidationErrorsAssertion.assertThat;
 
-public class CreateEmployeeCommandTest {
+public class AddEmployeeCommandTest {
 
 	private static final String REQUIRED_FIELD = "is a required field and can't be empty";
 
 	private EmployeePreparer given = new EmployeePreparer();
 
-	private CreateEmployeeCommand command;
+	private AddEmployeeCommand command;
 	private Validatable.ValidationErrors errors;
 
 	@Before

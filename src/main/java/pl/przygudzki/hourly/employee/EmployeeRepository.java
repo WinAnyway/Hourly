@@ -1,7 +1,11 @@
 package pl.przygudzki.hourly.employee;
 
-public interface EmployeeRepository {
+import java.util.Set;
 
-	void put(Employee employee);
+interface EmployeeRepository {
+
+	void save(Employee employee);
+
+	Set<EmployeeDto> findAll();
 
 }

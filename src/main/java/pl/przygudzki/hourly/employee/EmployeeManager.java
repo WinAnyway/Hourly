@@ -1,7 +1,11 @@
 package pl.przygudzki.hourly.employee;
 
+import java.util.Set;
+
 public interface EmployeeManager {
 
-	void createEmployee(CreateEmployeeCommand cmd);
+	void addEmployee(AddEmployeeCommand cmd);
+
+	Set<EmployeeDto> show();
 
 }

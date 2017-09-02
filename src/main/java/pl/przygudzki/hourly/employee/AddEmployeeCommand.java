@@ -6,7 +6,7 @@ import pl.przygudzki.hourly.commons.commands.Validatable;
 
 @Getter
 @Setter
-public class CreateEmployeeCommand implements Validatable {
+public class AddEmployeeCommand implements Validatable {
 
 	private Position position;
 	private String firstName;

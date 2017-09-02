@@ -1,11 +1,10 @@
-package pl.przygudzki.hourly.shift;
+package pl.przygudzki.hourly.employee;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import pl.przygudzki.hourly.employee.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -21,7 +20,7 @@ public class StandardEmployeeManagerTest {
 
 	private EmployeePreparer given = new EmployeePreparer();
 
-	private CreateEmployeeCommand command;
+	private AddEmployeeCommand command;
 
 	@Before
 	public void setUp() {
@@ -30,10 +29,17 @@ public class StandardEmployeeManagerTest {
 	}
 
 	@Test
-	public void shouldCreateEmployee() {
-		employeeManager.createEmployee(command);
+	public void shouldCreateAndPersistEmployeeOnAdd() {
+		employeeManager.addEmployee(command);
 
-		verify(employeeRepository, times(1)).put(any());
+		verify(employeeRepository, times(1)).save(any());
+	}
+
+	@Test
+	public void shouldQueryEmployeesOnShow() {
+		employeeManager.show();
+
+		verify(employeeRepository, times(1)).findAll();
 	}
 
 }

@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Employee {
+class Employee {
 
 	private EmployeeId id;
 	private Position position;
@@ -18,8 +18,15 @@ public class Employee {
 		this.lastName = lastName;
 	}
 
-	public static Employee create(CreateEmployeeCommand command) {
+	public static Employee create(AddEmployeeCommand command) {
 		return new Employee(EmployeeId.generate(), command.getPosition(), command.getFirstName(), command.getLastName());
+	}
+
+	void export(EmployeeDtoBuilder exporter) {
+		exporter.exportId(id);
+		exporter.exportPosition(position);
+		exporter.exportFirstName(firstName);
+		exporter.exportLastName(lastName);
 	}
 
 }
