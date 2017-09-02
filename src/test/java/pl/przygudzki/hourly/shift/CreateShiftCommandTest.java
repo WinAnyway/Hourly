@@ -2,11 +2,11 @@ package pl.przygudzki.hourly.shift;
 
 import org.junit.Before;
 import org.junit.Test;
-import pl.przygudzki.hourly.commands.Validatable.ValidationErrors;
+import pl.przygudzki.hourly.commons.commands.Validatable.ValidationErrors;
 
 import java.time.LocalDateTime;
 
-import static pl.przygudzki.hourly.commands.ValidationErrorsAssertion.assertThat;
+import static pl.przygudzki.hourly.commons.commands.ValidationErrorsAssertion.assertThat;
 
 public class CreateShiftCommandTest {
 

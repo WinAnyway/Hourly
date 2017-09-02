@@ -2,7 +2,7 @@ package pl.przygudzki.hourly.employee;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.przygudzki.hourly.commands.Validatable;
+import pl.przygudzki.hourly.commons.commands.Validatable;
 
 @Getter
 @Setter

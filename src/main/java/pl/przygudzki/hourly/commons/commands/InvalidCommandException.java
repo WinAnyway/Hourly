@@ -1,4 +1,4 @@
-package pl.przygudzki.hourly.commands;
+package pl.przygudzki.hourly.commons.commands;
 
 public class InvalidCommandException extends RuntimeException {
 

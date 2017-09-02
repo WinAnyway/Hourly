@@ -1,7 +1,7 @@
 package pl.przygudzki.hourly.employee;
 
-import pl.przygudzki.hourly.commands.InvalidCommandException;
-import pl.przygudzki.hourly.commands.Validatable;
+import pl.przygudzki.hourly.commons.commands.InvalidCommandException;
+import pl.przygudzki.hourly.commons.commands.Validatable;
 
 public class StandardEmployeeManager implements EmployeeManager {
 

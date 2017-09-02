@@ -1,4 +1,4 @@
-package pl.przygudzki.hourly.commands;
+package pl.przygudzki.hourly.commons.commands;
 
 import java.util.HashMap;
 import java.util.HashSet;
