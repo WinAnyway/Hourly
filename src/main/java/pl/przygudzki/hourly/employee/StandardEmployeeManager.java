@@ -2,6 +2,10 @@ package pl.przygudzki.hourly.employee;
 
 import pl.przygudzki.hourly.commons.commands.InvalidCommandException;
 import pl.przygudzki.hourly.commons.commands.Validatable;
+import pl.przygudzki.hourly.employee.dto.AddEmployeeCommand;
+import pl.przygudzki.hourly.employee.dto.AddPositionCommand;
+import pl.przygudzki.hourly.employee.dto.EmployeeDto;
+import pl.przygudzki.hourly.employee.dto.PositionNotFoundException;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,14 +26,16 @@ class StandardEmployeeManager implements EmployeeManager {
 	@Override
 	public void addEmployee(AddEmployeeCommand command) {
 		validateCommand(command);
-		command.setPosition(positionRepository.get(command.getPositionTitle()));
+		String title = command.getPositionTitle();
+		Position position = positionRepository.get(title).orElseThrow(() -> new PositionNotFoundException(title));
+		command.setPosition(position);
 		Employee employee = Employee.create(command);
 		employeeRepository.put(employee);
 	}
 
 	@Override
 	public Collection<EmployeeDto> showEmployees() {
-		return employeeRepository.findAll().stream()
+		return employeeRepository.getAll().stream()
 				.map(employee -> {
 					employee.export(employeeDtoBuilder);
 					return employeeDtoBuilder.build();

@@ -17,8 +17,8 @@ class InMemoryPositionRepository implements PositionRepository {
 	}
 
 	@Override
-	public Position get(String title) {
-		return positions.get(title);
+	public Optional<Position> get(String title) {
+		return Optional.ofNullable(positions.get(title));
 	}
 
 }

@@ -1,6 +1,7 @@
 package pl.przygudzki.hourly.employee;
 
 import java.util.List;
+import java.util.Optional;
 
 interface PositionRepository {
 
@@ -8,6 +9,6 @@ interface PositionRepository {
 
 	List<Position> getAll();
 
-	Position get(String title);
+	Optional<Position> get(String title);
 
 }

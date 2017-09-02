@@ -1,15 +1,12 @@
 package pl.przygudzki.hourly.commons.commands;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
 public class InvalidCommandException extends RuntimeException {
 
-	private Validatable.ValidationErrors errors;
-
-	public InvalidCommandException(Validatable.ValidationErrors errors) {
-		this.errors = errors;
-	}
-
-	public Validatable.ValidationErrors getErrors() {
-		return errors;
-	}
+	private final Validatable.ValidationErrors errors;
 
 }

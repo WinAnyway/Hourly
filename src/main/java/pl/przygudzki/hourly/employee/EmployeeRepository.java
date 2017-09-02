@@ -6,6 +6,6 @@ interface EmployeeRepository {
 
 	void put(Employee employee);
 
-	List<Employee> findAll();
+	List<Employee> getAll();
 
 }

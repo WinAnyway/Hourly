@@ -2,6 +2,7 @@ package pl.przygudzki.hourly.employee;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import pl.przygudzki.hourly.employee.dto.AddEmployeeCommand;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class Employee {

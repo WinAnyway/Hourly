@@ -1,5 +1,8 @@
 package pl.przygudzki.hourly.employee;
 
+import pl.przygudzki.hourly.employee.dto.AddEmployeeCommand;
+import pl.przygudzki.hourly.employee.dto.AddPositionCommand;
+
 class EmployeePreparer {
 
 	AddEmployeeCommand validAddEmployeeCommand() {

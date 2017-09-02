@@ -1,16 +1,16 @@
-package pl.przygudzki.hourly.employee;
+package pl.przygudzki.hourly.employee.dto;
 
 import pl.przygudzki.hourly.commons.commands.Validatable;
 
-class AddPositionCommand implements Validatable {
+public class AddPositionCommand implements Validatable {
 
 	private String title;
 
-	String getTitle() {
+	public String getTitle() {
 		return title;
 	}
 
-	void setTitle(String title) {
+	public void setTitle(String title) {
 		this.title = title;
 	}
 

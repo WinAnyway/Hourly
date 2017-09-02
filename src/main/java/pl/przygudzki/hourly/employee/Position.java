@@ -1,8 +1,12 @@
 package pl.przygudzki.hourly.employee;
 
-class Position {
+import lombok.EqualsAndHashCode;
+import pl.przygudzki.hourly.employee.dto.AddPositionCommand;
 
-	private String title;
+@EqualsAndHashCode
+public class Position {
+
+	private final String title;
 
 	private Position(String position) {
 		this.title = position;
@@ -14,6 +18,10 @@ class Position {
 
 	static Position create(AddPositionCommand command) {
 		return new Position(command.getTitle());
+	}
+
+	static Position of(String title) {
+		return new Position(title);
 	}
 
 }

@@ -1,16 +1,17 @@
-package pl.przygudzki.hourly.employee;
+package pl.przygudzki.hourly.employee.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 import pl.przygudzki.hourly.commons.commands.Validatable;
+import pl.przygudzki.hourly.employee.Position;
 
 @Getter
 @Setter
 public class AddEmployeeCommand implements Validatable {
 
-	private String positionTitle;
 	private String firstName;
 	private String lastName;
+	private String positionTitle;
 	private Position position;
 
 	@Override
@@ -20,14 +21,14 @@ public class AddEmployeeCommand implements Validatable {
 		validateLastName(errors);
 	}
 
-	private void validateLastName(ValidationErrors errors) {
-		if (isNullOrEmpty(lastName))
-			errors.add("lastName", REQUIRED_FIELD);
-	}
-
 	private void validateFirstName(ValidationErrors errors) {
 		if (isNullOrEmpty(firstName))
 			errors.add("firstName", REQUIRED_FIELD);
+	}
+
+	private void validateLastName(ValidationErrors errors) {
+		if (isNullOrEmpty(lastName))
+			errors.add("lastName", REQUIRED_FIELD);
 	}
 
 	private void validatePosition(ValidationErrors errors) {

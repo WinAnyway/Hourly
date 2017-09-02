@@ -14,7 +14,7 @@ class InMemoryEmployeeRepository implements EmployeeRepository {
 	}
 
 	@Override
-	public List<Employee> findAll() {
+	public List<Employee> getAll() {
 		return new LinkedList<>(employees.values());
 	}
 

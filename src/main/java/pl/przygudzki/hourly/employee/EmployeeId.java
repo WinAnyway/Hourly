@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-class EmployeeId {
+public class EmployeeId {
 
 	private static long idSequenceCounter = 0;
 
@@ -16,6 +16,10 @@ class EmployeeId {
 
 	static EmployeeId generate() {
 		return new EmployeeId(++idSequenceCounter);
+	}
+
+	Long getId() {
+		return id;
 	}
 
 }
