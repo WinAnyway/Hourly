@@ -17,7 +17,7 @@ public class AddEmployeeCommandTest {
 
 	@Before
 	public void setUp() throws Exception {
-		command = given.validCreateEmployeeCommand();
+		command = given.validAddEmployeeCommand();
 		errors = new Validatable.ValidationErrors();
 	}
 
@@ -30,20 +30,20 @@ public class AddEmployeeCommandTest {
 
 	@Test
 	public void shouldInvalidateWhenPositionIsNull() {
-		command.setPosition(null);
+		command.setPositionTitle(null);
 
 		command.validate(errors);
 
-		assertThat(errors).hasExactly(1).errors("position", REQUIRED_FIELD);
+		assertThat(errors).hasExactly(1).errors("positionTitle", REQUIRED_FIELD);
 	}
 
 	@Test
 	public void shouldInvalidateWhenPositionNameIsEmpty() {
-		command.setPosition(new Position(""));
+		command.setPositionTitle("");
 
 		command.validate(errors);
 
-		assertThat(errors).hasExactly(1).errors("position", REQUIRED_FIELD);
+		assertThat(errors).hasExactly(1).errors("positionTitle", REQUIRED_FIELD);
 	}
 
 	@Test

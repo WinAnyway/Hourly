@@ -1,23 +1,21 @@
 package pl.przygudzki.hourly.employee;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 class InMemoryEmployeeRepository implements EmployeeRepository {
 
-	private Set<EmployeeDto> employees = new HashSet<>();
+	private HashMap<EmployeeId, Employee> employees = new HashMap();
 
 	@Override
-	public void save(Employee employee) {
-		EmployeeDtoBuilder exporter = new EmployeeDtoBuilder();
-		employee.export(exporter);
-		EmployeeDto employeeDto = exporter.build();
-		employees.add(employeeDto);
+	public void put(Employee employee) {
+		employees.put(employee.getId(), employee);
 	}
 
 	@Override
-	public Set<EmployeeDto> findAll() {
-		return employees;
+	public List<Employee> findAll() {
+		return new LinkedList<>(employees.values());
 	}
 
 }

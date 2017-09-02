@@ -4,7 +4,8 @@ class EmployeeConfiguration {
 
 	EmployeeManager employeeManager() {
 		EmployeeRepository employeeRepository = new InMemoryEmployeeRepository();
-		return new StandardEmployeeManager(employeeRepository);
+		PositionRepository positionRepository = new InMemoryPositionRepository();
+		return new StandardEmployeeManager(employeeRepository, positionRepository);
 	}
 
 }

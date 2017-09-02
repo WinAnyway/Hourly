@@ -15,7 +15,7 @@ class EmployeeDtoBuilder implements EmployeeExporter {
 	}
 
 	void exportPosition(Position position) {
-		dto.setPosition(position.getName());
+		dto.setPosition(position.getTitle());
 	}
 
 	void exportFirstName(String firstName) {

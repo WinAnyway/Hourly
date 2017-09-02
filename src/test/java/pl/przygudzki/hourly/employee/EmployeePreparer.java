@@ -1,12 +1,18 @@
 package pl.przygudzki.hourly.employee;
 
-public class EmployeePreparer {
+class EmployeePreparer {
 
-	public AddEmployeeCommand validCreateEmployeeCommand() {
+	AddEmployeeCommand validAddEmployeeCommand() {
 		AddEmployeeCommand command = new AddEmployeeCommand();
-		command.setPosition(new Position("Position"));
+		command.setPositionTitle("Manager");
 		command.setFirstName("John");
 		command.setLastName("Doe");
+		return command;
+	}
+
+	AddPositionCommand validAddPositionCommand() {
+		AddPositionCommand command = new AddPositionCommand();
+		command.setTitle("Manager");
 		return command;
 	}
 

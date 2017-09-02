@@ -1,15 +1,19 @@
 package pl.przygudzki.hourly.employee;
 
-public class Position {
+class Position {
 
-	private String name;
+	private String title;
 
-	public Position(String position) {
-		this.name = position;
+	private Position(String position) {
+		this.title = position;
 	}
 
-	String getName() {
-		return name;
+	String getTitle() {
+		return title;
+	}
+
+	static Position create(AddPositionCommand command) {
+		return new Position(command.getTitle());
 	}
 
 }

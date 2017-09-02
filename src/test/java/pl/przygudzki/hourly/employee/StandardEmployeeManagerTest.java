@@ -16,28 +16,29 @@ public class StandardEmployeeManagerTest {
 	@Mock
 	private EmployeeRepository employeeRepository;
 
+	@Mock
+	private PositionRepository positionRepository;
+
 	private EmployeeManager employeeManager;
-
 	private EmployeePreparer given = new EmployeePreparer();
-
 	private AddEmployeeCommand command;
 
 	@Before
 	public void setUp() {
-		employeeManager = new StandardEmployeeManager(employeeRepository);
-		command = given.validCreateEmployeeCommand();
+		employeeManager = new StandardEmployeeManager(employeeRepository, positionRepository);
+		command = given.validAddEmployeeCommand();
 	}
 
 	@Test
 	public void shouldCreateAndPersistEmployeeOnAdd() {
 		employeeManager.addEmployee(command);
 
-		verify(employeeRepository, times(1)).save(any());
+		verify(employeeRepository, times(1)).put(any());
 	}
 
 	@Test
 	public void shouldQueryEmployeesOnShow() {
-		employeeManager.show();
+		employeeManager.showEmployees();
 
 		verify(employeeRepository, times(1)).findAll();
 	}

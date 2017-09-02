@@ -3,7 +3,7 @@ package pl.przygudzki.hourly.employee;
 import org.junit.Test;
 import pl.przygudzki.hourly.commons.commands.InvalidCommandException;
 
-import java.util.Set;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -14,16 +14,55 @@ public class EmployeeAcceptanceTest {
 	private EmployeeManager employeeManager = new EmployeeConfiguration().employeeManager();
 
 	@Test
+	public void shouldAddPosition() {
+		// given a valid AddPositionCommand
+		AddPositionCommand command = given.validAddPositionCommand();
+
+		// when we add a positionTitle
+		employeeManager.addPosition(command);
+
+		// then system has a positionTitle
+		Collection<Position> positions = employeeManager.showPositions();
+		assertThat(positions.size()).isEqualTo(1);
+	}
+
+	@Test
+	public void shouldNotAddPositionWthoutData() {
+		// given an empty command
+		AddPositionCommand command = new AddPositionCommand();
+
+		// when we try to add an employee
+		Throwable thrown = catchThrowable(() -> employeeManager.addPosition(command));
+
+		// then system throws exception
+		assertThat(thrown).isInstanceOf(InvalidCommandException.class);
+	}
+
+	@Test
+	public void shouldNotAddPositionWithInvalidData() {
+		// given a command with invalid data
+		AddPositionCommand command = given.validAddPositionCommand();
+		command.setTitle("");
+
+		Throwable thrown = catchThrowable(() -> employeeManager.addPosition(command));
+
+		// then system throws exception
+		assertThat(thrown).isInstanceOf(InvalidCommandException.class);
+	}
+
+	@Test
 	public void shouldAddEmployee() {
-		// given a valid AddEmployeeCommand
-		AddEmployeeCommand command = given.validCreateEmployeeCommand();
+		// given that a valid AddEmployeeCommand
+		AddEmployeeCommand command = given.validAddEmployeeCommand();
+		// and that a suitable position exists in the system
+		employeeManager.addPosition(given.validAddPositionCommand());
 
 		// when we add an employee
 		employeeManager.addEmployee(command);
 
 		// then system has employee
-		Set<EmployeeDto> show = employeeManager.show();
-		assertThat(show.size()).isEqualTo(1);
+		Collection<EmployeeDto> employeeDtos = employeeManager.showEmployees();
+		assertThat(employeeDtos.size()).isEqualTo(1);
 	}
 
 	@Test
@@ -41,10 +80,10 @@ public class EmployeeAcceptanceTest {
 	@Test
 	public void shouldNotAddEmployeeWithInvalidData() {
 		// given a command with invalid data
-		AddEmployeeCommand command = given.validCreateEmployeeCommand();
+		AddEmployeeCommand command = given.validAddEmployeeCommand();
 		command.setFirstName("");
 		command.setLastName("");
-		command.setPosition(null);
+		command.setPositionTitle(null);
 
 		Throwable thrown = catchThrowable(() -> employeeManager.addEmployee(command));
 

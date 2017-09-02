@@ -8,9 +8,10 @@ import pl.przygudzki.hourly.commons.commands.Validatable;
 @Setter
 public class AddEmployeeCommand implements Validatable {
 
-	private Position position;
+	private String positionTitle;
 	private String firstName;
 	private String lastName;
+	private Position position;
 
 	@Override
 	public void validate(ValidationErrors errors) {
@@ -30,8 +31,8 @@ public class AddEmployeeCommand implements Validatable {
 	}
 
 	private void validatePosition(ValidationErrors errors) {
-		if (position == null || isNullOrEmpty(position.getName()))
-			errors.add("position", REQUIRED_FIELD);
+		if (isNullOrEmpty(positionTitle))
+			errors.add("positionTitle", REQUIRED_FIELD);
 	}
 
 }

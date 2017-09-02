@@ -1,11 +1,15 @@
 package pl.przygudzki.hourly.employee;
 
-import java.util.Set;
+import java.util.Collection;
 
 public interface EmployeeManager {
 
 	void addEmployee(AddEmployeeCommand cmd);
 
-	Set<EmployeeDto> show();
+	Collection<EmployeeDto> showEmployees();
+
+	void addPosition(AddPositionCommand command);
+
+	Collection<Position> showPositions();
 
 }
