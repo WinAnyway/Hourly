@@ -33,7 +33,7 @@ class EmployeeDtoBuilder implements EmployeeExporter {
 	public void exportPosition(Position position) {
 		position.export(builder);
 		PositionDto positionDto = builder.build();
-		dto.setPosition(positionDto.getTitle());
+		dto.setPosition(positionDto);
 	}
 
 }

@@ -4,7 +4,10 @@ import org.junit.Test;
 import pl.przygudzki.hourly.commons.commands.InvalidCommandException;
 import pl.przygudzki.hourly.employee.dto.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -266,12 +269,10 @@ public class EmployeeAcceptanceTest {
 						.anyMatch(employeeDtoReflectsAddEmployeeCommand(dto)));
 	}
 
-	private Predicate<AddEmployeeCommand> employeeDtoReflectsAddEmployeeCommand(EmployeeDto dto) {
-		return command -> dto.getFirstName().equals(command.getFirstName())
-				&& dto.getLastName().equals(command.getLastName());
-
-		//TODO – vide notes in the EmployeeDto class
-//				&& employeeDto.getPosition.getId().equals(command.getPositionId());
+	private Predicate<AddEmployeeCommand> employeeDtoReflectsAddEmployeeCommand(EmployeeDto employeeDto) {
+		return command -> employeeDto.getFirstName().equals(command.getFirstName())
+				&& employeeDto.getLastName().equals(command.getLastName())
+				&& employeeDto.getPosition().getId().equals(command.getPositionId());
 	}
 
 }
