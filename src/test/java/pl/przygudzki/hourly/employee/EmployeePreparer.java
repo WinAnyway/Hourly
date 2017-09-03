@@ -19,4 +19,10 @@ class EmployeePreparer {
 		return command;
 	}
 
+	AddPositionCommand anotherValidAddPositionCommand() {
+		AddPositionCommand command = new AddPositionCommand();
+		command.setTitle("Copywriter");
+		return command;
+	}
+
 }

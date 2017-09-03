@@ -46,7 +46,7 @@ public class StandardEmployeeManagerTest {
 
 	@Test
 	public void shouldQueryEmployeesOnShow() {
-		employeeManager.showEmployees();
+		employeeManager.listEmployees();
 
 		verify(employeeRepository, times(1)).getAll();
 	}

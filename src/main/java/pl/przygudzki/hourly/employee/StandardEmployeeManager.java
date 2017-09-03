@@ -34,7 +34,7 @@ class StandardEmployeeManager implements EmployeeManager {
 	}
 
 	@Override
-	public Collection<EmployeeDto> showEmployees() {
+	public Collection<EmployeeDto> listEmployees() {
 		return employeeRepository.getAll().stream()
 				.map(employee -> {
 					employee.export(employeeDtoBuilder);
@@ -51,7 +51,7 @@ class StandardEmployeeManager implements EmployeeManager {
 	}
 
 	@Override
-	public List<Position> showPositions() {
+	public List<Position> listPositions() {
 		return positionRepository.getAll();
 	}
 

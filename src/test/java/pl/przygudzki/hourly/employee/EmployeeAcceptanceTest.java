@@ -25,12 +25,12 @@ public class EmployeeAcceptanceTest {
 		employeeManager.addPosition(command);
 
 		// then system has a positionTitle
-		Collection<Position> positions = employeeManager.showPositions();
+		Collection<Position> positions = employeeManager.listPositions();
 		assertThat(positions.size()).isEqualTo(1);
 	}
 
 	@Test
-	public void shouldNotAddPositionWthoutData() {
+	public void shouldNotAddPositionWithoutTitle() {
 		// given an empty command
 		AddPositionCommand command = new AddPositionCommand();
 
@@ -54,6 +54,19 @@ public class EmployeeAcceptanceTest {
 	}
 
 	@Test
+	public void shouldListPositions() {
+		// given two positions added to the system
+		employeeManager.addPosition(given.validAddPositionCommand());
+		employeeManager.addPosition(given.anotherValidAddPositionCommand());
+
+		// when we list available positions
+		Collection<Position> positions = employeeManager.listPositions();
+
+		// then system returns a list of two positions
+		assertThat(positions.size()).isEqualTo(2);
+	}
+
+	@Test
 	public void shouldAddEmployee() {
 		// given that a valid AddEmployeeCommand
 		AddEmployeeCommand command = given.validAddEmployeeCommand();
@@ -64,7 +77,7 @@ public class EmployeeAcceptanceTest {
 		employeeManager.addEmployee(command);
 
 		// then system has employee
-		Collection<EmployeeDto> employeeDtos = employeeManager.showEmployees();
+		Collection<EmployeeDto> employeeDtos = employeeManager.listEmployees();
 		assertThat(employeeDtos.size()).isEqualTo(1);
 	}
 

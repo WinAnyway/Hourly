@@ -10,10 +10,10 @@ public interface EmployeeManager {
 
 	void addEmployee(AddEmployeeCommand cmd);
 
-	Collection<EmployeeDto> showEmployees();
+	Collection<EmployeeDto> listEmployees();
 
 	void addPosition(AddPositionCommand command);
 
-	Collection<Position> showPositions();
+	Collection<Position> listPositions();
 
 }
