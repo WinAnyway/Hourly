@@ -6,7 +6,7 @@ import pl.przygudzki.hourly.employee.dto.PositionDto;
 
 import java.util.Collection;
 
-interface PositionManager {
+public interface PositionManager {
 
 	void addPosition(AddPositionCommand command);
 
