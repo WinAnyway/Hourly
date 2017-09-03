@@ -29,7 +29,7 @@ public class StandardEmployeeManagerTest {
 	private Position position;
 
 	private EmployeeManager employeeManager;
-	private EmployeePreparer given = new EmployeePreparer();
+	private EmployeePreparer given = EmployeePreparer.withInternalEmployeeManager();
 	private AddEmployeeCommand command;
 
 	@Before

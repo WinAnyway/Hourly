@@ -4,9 +4,11 @@ import org.junit.Test;
 import pl.przygudzki.hourly.commons.commands.InvalidCommandException;
 import pl.przygudzki.hourly.employee.dto.*;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -65,12 +67,10 @@ public class EmployeeAcceptanceTest {
 		employeeManager.addPosition(command2);
 
 		// when we list Positions that exist in the system
-		List<PositionDto> positions = new LinkedList<>(employeeManager.listPositions());
+		List<PositionDto> positionDtos = new LinkedList<>(employeeManager.listPositions());
 
 		// then system returns a list of two positions
-		assertThat(positions.size()).isEqualTo(2);
-		assertThat(positions.get(0).getTitle()).isEqualTo(command1.getTitle());
-		assertThat(positions.get(1).getTitle()).isEqualTo(command2.getTitle());
+		assertThatPositionDtosReflectAddCommands(positionDtos, command1, command2);
 	}
 
 	@Test
@@ -133,9 +133,12 @@ public class EmployeeAcceptanceTest {
 		// when we add an employee
 		employeeManager.addEmployee(command);
 
-		// then system has the employee
-		Collection<EmployeeDto> employeeDtos = employeeManager.listEmployees();
+		// then the employee exists in the system
+		List<EmployeeDto> employeeDtos = new LinkedList<>(employeeManager.listEmployees());
 		assertThat(employeeDtos.size()).isEqualTo(1);
+		EmployeeDto employeeDto = employeeDtos.get(0);
+
+		assertThatEmployeeDtosReflectAddCommands(employeeDtos, command);
 	}
 
 	@Test
@@ -186,15 +189,41 @@ public class EmployeeAcceptanceTest {
 		// given the employee exists in the system
 		Long positionId = given.newPositionIsAdded().getId();
 		AddEmployeeCommand command1 = given.validAddEmployeeCommand(positionId);
-		command1.setPositionId(positionId);
-		AddEmployeeCommand command2 = given.anotherValidAddEmployeeCommand();
-		command2.setPositionId(positionId);
+		AddEmployeeCommand command2 = given.anotherValidAddEmployeeCommand(positionId);
 		employeeManager.addEmployee(command1);
 		employeeManager.addEmployee(command2);
 
 		// when we list all employees
-		Collection<EmployeeDto> employeeDtos = employeeManager.listEmployees();
+		List<EmployeeDto> employeeDtos = new LinkedList<>(employeeManager.listEmployees());
 
-		//
+		// than the system returns a list of two employees
+		assertThatEmployeeDtosReflectAddCommands(employeeDtos, command1, command2);
 	}
+
+	private void assertThatPositionDtosReflectAddCommands(Collection<PositionDto> dtos, AddPositionCommand... commands) {
+		assertThat(dtos.size()).isEqualTo(commands.length);
+		assertThat(dtos.stream())
+				.allMatch(dto -> Arrays.stream(commands)
+						.anyMatch(positionDtoReflectsAddPositionCommand(dto)));
+	}
+
+	private Predicate<AddPositionCommand> positionDtoReflectsAddPositionCommand(PositionDto positionDto) {
+		return command -> positionDto.getTitle().equals(command.getTitle());
+	}
+
+	private void assertThatEmployeeDtosReflectAddCommands(Collection<EmployeeDto> dtos, AddEmployeeCommand... commands) {
+		assertThat(dtos.size()).isEqualTo(commands.length);
+		assertThat(dtos.stream())
+				.allMatch(dto -> Arrays.stream(commands)
+						.anyMatch(employeeDtoReflectsAddEmployeeCommand(dto)));
+	}
+
+	private Predicate<AddEmployeeCommand> employeeDtoReflectsAddEmployeeCommand(EmployeeDto dto) {
+		return command -> dto.getFirstName().equals(command.getFirstName())
+				&& dto.getLastName().equals(command.getLastName());
+
+		//TODO – vide notes in the EmployeeDto class
+//				&& employeeDto.getPosition.getId().equals(command.getPositionId());
+	}
+
 }

@@ -11,7 +11,7 @@ public class EditPositionCommandTest {
 
 	private static final String REQUIRED_FIELD = "is a required field and can't be empty";
 
-	private EmployeePreparer given = new EmployeePreparer();
+	private EmployeePreparer given = EmployeePreparer.withInternalEmployeeManager();
 
 	private EditPositionCommand command;
 	private Validatable.ValidationErrors errors;

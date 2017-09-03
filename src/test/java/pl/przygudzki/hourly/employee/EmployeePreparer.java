@@ -1,10 +1,7 @@
 package pl.przygudzki.hourly.employee;
 
 import lombok.AllArgsConstructor;
-import pl.przygudzki.hourly.employee.dto.AddEmployeeCommand;
-import pl.przygudzki.hourly.employee.dto.AddPositionCommand;
-import pl.przygudzki.hourly.employee.dto.EditPositionCommand;
-import pl.przygudzki.hourly.employee.dto.PositionDto;
+import pl.przygudzki.hourly.employee.dto.*;
 
 import java.util.Collection;
 
@@ -13,11 +10,23 @@ public class EmployeePreparer {
 
 	private final EmployeeManager employeeManager;
 
+	public static EmployeePreparer withInternalEmployeeManager() {
+		return new EmployeePreparer(new EmployeeConfiguration().employeeManager());
+	}
+
 	PositionDto newPositionIsAdded() {
 		Collection<PositionDto> beforePositions = employeeManager.listPositions();
 		employeeManager.addPosition(validAddPositionCommand());
 		return employeeManager.listPositions().stream()
 				.filter(positionDto -> !beforePositions.contains(positionDto))
+				.findAny().orElseThrow(IllegalStateException::new);
+	}
+
+	EmployeeDto newEmployeeIsAdded(Long positionId) {
+		Collection<EmployeeDto> beforeEmployees = employeeManager.listEmployees();
+		employeeManager.addEmployee(validAddEmployeeCommand(positionId));
+		return employeeManager.listEmployees().stream()
+				.filter(employeeDto -> !beforeEmployees.contains(employeeDto))
 				.findAny().orElseThrow(IllegalStateException::new);
 	}
 
@@ -29,8 +38,8 @@ public class EmployeePreparer {
 		return createAddEmployeeCommand(123L, "John", "Doe");
 	}
 
-	AddEmployeeCommand anotherValidAddEmployeeCommand() {
-		return createAddEmployeeCommand(123L, "Jane", "Dean");
+	AddEmployeeCommand anotherValidAddEmployeeCommand(Long positionId) {
+		return createAddEmployeeCommand(positionId, "Jane", "Dean");
 	}
 
 	AddPositionCommand validAddPositionCommand() {
