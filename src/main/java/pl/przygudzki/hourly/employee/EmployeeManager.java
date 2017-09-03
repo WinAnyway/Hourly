@@ -12,14 +12,4 @@ public interface EmployeeManager {
 
 	Collection<EmployeeDto> listEmployees();
 
-	void addPosition(AddPositionCommand command);
-
-	Position getPositionOrThrow(Long positionId);
-
-	Collection<PositionDto> listPositions();
-
-	void editPosition(EditPositionCommand command, Long id);
-
-	void removePosition(Long id);
-
 }

@@ -20,12 +20,11 @@ public class StandardEmployeeManagerTest {
 	private static final long POSITION_ID = 123L;
 
 	@Mock
+	private PositionManager positionManager;
+
+	@Mock
 	private EmployeeRepository employeeRepository;
 
-	@Mock
-	private PositionRepository positionRepository;
-
-	@Mock
 	private Position position;
 
 	private EmployeeManager employeeManager;
@@ -34,15 +33,14 @@ public class StandardEmployeeManagerTest {
 
 	@Before
 	public void setUp() {
-		employeeManager = new StandardEmployeeManager(employeeRepository, positionRepository);
+		employeeManager = new StandardEmployeeManager(positionManager, employeeRepository);
 		command = given.validAddEmployeeCommand();
 	}
 
 	@Test
 	public void shouldCreateAndPersistEmployeeOnAdd() {
 		command.setPositionId(POSITION_ID);
-		when(positionRepository.get(PositionId.of(POSITION_ID))).thenReturn(Optional.of(position));
-		when(position.isAvailable()).thenReturn(true);
+		when(positionManager.getPositionOrThrow(POSITION_ID)).thenReturn(position);
 
 		employeeManager.addEmployee(command);
 

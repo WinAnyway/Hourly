@@ -9,18 +9,18 @@ import java.util.stream.Collectors;
 
 class StandardEmployeeManager implements EmployeeManager {
 
+	private PositionManager positionManager;
 	private EmployeeRepository employeeRepository;
-	private PositionRepository positionRepository;
 
-	StandardEmployeeManager(EmployeeRepository employeeRepository, PositionRepository positionRepository) {
+	StandardEmployeeManager(PositionManager positionManager, EmployeeRepository employeeRepository) {
+		this.positionManager = positionManager;
 		this.employeeRepository = employeeRepository;
-		this.positionRepository = positionRepository;
 	}
 
 	@Override
 	public void addEmployee(AddEmployeeCommand command) {
 		validateCommand(command);
-		Position position = getPositionOrThrow(command.getPositionId());
+		Position position = positionManager.getPositionOrThrow(command.getPositionId());
 		Employee employee = Employee.create(command, position);
 		employeeRepository.put(employee);
 	}
@@ -37,44 +37,6 @@ class StandardEmployeeManager implements EmployeeManager {
 		return employeeRepository.getAll().stream()
 				.map(employee -> {
 					employee.export(dtoBuilder);
-					return dtoBuilder.build();
-				})
-				.collect(Collectors.toList());
-	}
-
-	@Override
-	public void addPosition(AddPositionCommand command) {
-		validateCommand(command);
-		Position position = Position.create(command);
-		positionRepository.put(position);
-	}
-
-	@Override
-	public Position getPositionOrThrow(Long positionId) {
-		return positionRepository.get(PositionId.of(positionId))
-				.filter(Position::isAvailable)
-				.orElseThrow(() -> new PositionNotFoundException(positionId));
-	}
-
-	@Override
-	public void editPosition(EditPositionCommand command, Long id) {
-		Position position = getPositionOrThrow(id);
-		position.edit(command);
-	}
-
-	@Override
-	public void removePosition(Long id) {
-		Position position = getPositionOrThrow(id);
-		position.remove();
-	}
-
-	@Override
-	public Collection<PositionDto> listPositions() {
-		final PositionDtoBuilder dtoBuilder = new PositionDtoBuilder();
-		return positionRepository.getAll().stream()
-				.filter(Position::isAvailable)
-				.map(position -> {
-					position.export(dtoBuilder);
 					return dtoBuilder.build();
 				})
 				.collect(Collectors.toList());

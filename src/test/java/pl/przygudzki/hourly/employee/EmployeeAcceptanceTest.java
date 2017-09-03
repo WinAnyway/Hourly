@@ -18,19 +18,21 @@ public class EmployeeAcceptanceTest {
 	private static final long NON_EXISTENT_POSITION_ID = 123L;
 	private static final long NON_EXISTENT_EMPLOYEE_ID = 123L;
 
-	private EmployeeManager employeeManager = new EmployeeConfiguration().employeeManager();
-	private EmployeePreparer given = new EmployeePreparer(employeeManager);
+	private PositionManager positionManager = new EmployeeConfiguration().positionManager();
+	private EmployeeManager employeeManager = new EmployeeConfiguration().employeeManager(positionManager);
+
+	private EmployeePreparer given = new EmployeePreparer(employeeManager, positionManager);
 
 	@Test
 	public void shouldAddPosition() {
 		// given a valid AddPositionCommand
 		AddPositionCommand command = given.validAddPositionCommand();
 
-		// when we add a positionTitle
-		employeeManager.addPosition(command);
+		// when we add a position to the system
+		positionManager.addPosition(command);
 
-		// then system has a positionTitle
-		List<PositionDto> positionDtos = new LinkedList<>(employeeManager.listPositions());
+		// then the position exists in the system
+		List<PositionDto> positionDtos = new LinkedList<>(positionManager.listPositions());
 		assertThat(positionDtos.size()).isEqualTo(1);
 		assertThat(positionDtos.get(0).getTitle()).isEqualTo(command.getTitle());
 	}
@@ -41,7 +43,7 @@ public class EmployeeAcceptanceTest {
 		AddPositionCommand command = new AddPositionCommand();
 
 		// when we try to add an employee
-		Throwable thrown = catchThrowable(() -> employeeManager.addPosition(command));
+		Throwable thrown = catchThrowable(() -> positionManager.addPosition(command));
 
 		// then system throws exception
 		assertThat(thrown).isInstanceOf(InvalidCommandException.class);
@@ -53,7 +55,7 @@ public class EmployeeAcceptanceTest {
 		AddPositionCommand command = given.validAddPositionCommand();
 		command.setTitle("");
 
-		Throwable thrown = catchThrowable(() -> employeeManager.addPosition(command));
+		Throwable thrown = catchThrowable(() -> positionManager.addPosition(command));
 
 		// then system throws exception
 		assertThat(thrown).isInstanceOf(InvalidCommandException.class);
@@ -63,12 +65,12 @@ public class EmployeeAcceptanceTest {
 	public void shouldListPositions() {
 		// given two Positions added to the system
 		AddPositionCommand command1 = given.validAddPositionCommand();
-		employeeManager.addPosition(command1);
+		positionManager.addPosition(command1);
 		AddPositionCommand command2 = given.anotherValidAddPositionCommand();
-		employeeManager.addPosition(command2);
+		positionManager.addPosition(command2);
 
 		// when we list Positions that exist in the system
-		List<PositionDto> positionDtos = new LinkedList<>(employeeManager.listPositions());
+		List<PositionDto> positionDtos = new LinkedList<>(positionManager.listPositions());
 
 		// then system returns a list of two positions
 		assertThatPositionDtosReflectAddCommands(positionDtos, command1, command2);
@@ -80,7 +82,7 @@ public class EmployeeAcceptanceTest {
 		Long positionId = given.newPositionIsAdded().getId();
 
 		// when we try to get the position by id
-		Position position = employeeManager.getPositionOrThrow(positionId);
+		Position position = positionManager.getPositionOrThrow(positionId);
 
 		// then system returns the position
 		assertThat(position).hasNoNullFieldsOrProperties();
@@ -89,10 +91,10 @@ public class EmployeeAcceptanceTest {
 	@Test
 	public void shouldThrownWhenGettingNonexistentPosition() {
 		// given the position doesn't exist in the system
-		assertThat(employeeManager.listPositions()).isEmpty();
+		assertThat(positionManager.listPositions()).isEmpty();
 
 		// when we try to get the position
-		Throwable thrown = catchThrowable(() -> employeeManager.getPositionOrThrow(NON_EXISTENT_POSITION_ID));
+		Throwable thrown = catchThrowable(() -> positionManager.getPositionOrThrow(NON_EXISTENT_POSITION_ID));
 
 		// then system throws exception
 		assertThat(thrown).isInstanceOf(PositionNotFoundException.class);
@@ -101,46 +103,46 @@ public class EmployeeAcceptanceTest {
 	@Test
 	public void shouldEditPosition() {
 		// given a Position that exists within the system
-		employeeManager.addPosition(given.validAddPositionCommand());
-		PositionDto positionDto = new LinkedList<>(employeeManager.listPositions()).getFirst();
+		positionManager.addPosition(given.validAddPositionCommand());
+		PositionDto positionDto = new LinkedList<>(positionManager.listPositions()).getFirst();
 		// and an EditPositionCommand to edit that position
 		EditPositionCommand command = given.editPositionCommandFromPositionDto(positionDto);
 		String newTitle = "Barista";
 		command.setTitle(newTitle);
 
 		// when we edit the Position
-		employeeManager.editPosition(command, positionDto.getId());
+		positionManager.editPosition(command, positionDto.getId());
 
 		// then the system reflects the edits we made
-		PositionDto positionDtoAfter = new LinkedList<>(employeeManager.listPositions()).getFirst();
+		PositionDto positionDtoAfter = new LinkedList<>(positionManager.listPositions()).getFirst();
 		assertThat(positionDtoAfter.getTitle()).isEqualTo(newTitle);
 	}
 
 	@Test
 	public void shouldRemovePosition() {
 		// given a Position exists within the system
-		employeeManager.addPosition(given.validAddPositionCommand());
-		PositionDto positionDto = new LinkedList<>(employeeManager.listPositions()).getFirst();
+		positionManager.addPosition(given.validAddPositionCommand());
+		PositionDto positionDto = new LinkedList<>(positionManager.listPositions()).getFirst();
 
 		// when we remove the Position
-		employeeManager.removePosition(positionDto.getId());
+		positionManager.removePosition(positionDto.getId());
 
 		// then the Position is no longer available in the system
-		assertThat(catchThrowable(() -> employeeManager.getPositionOrThrow(positionDto.getId())))
+		assertThat(catchThrowable(() -> positionManager.getPositionOrThrow(positionDto.getId())))
 				.isInstanceOf(PositionNotFoundException.class);
 	}
 
 	@Test
 	public void shouldNotListRemovedPositions() {
 		// given a Position that was removed from the system
-		employeeManager.addPosition(given.validAddPositionCommand());
-		PositionDto positionDto = new LinkedList<>(employeeManager.listPositions()).getFirst();
-		employeeManager.removePosition(positionDto.getId());
-		assertThat(catchThrowable(() -> employeeManager.getPositionOrThrow(positionDto.getId())))
+		positionManager.addPosition(given.validAddPositionCommand());
+		PositionDto positionDto = new LinkedList<>(positionManager.listPositions()).getFirst();
+		positionManager.removePosition(positionDto.getId());
+		assertThat(catchThrowable(() -> positionManager.getPositionOrThrow(positionDto.getId())))
 				.isInstanceOf(PositionNotFoundException.class);
 
 		// when we list Positions that are available in the system
-		Collection<PositionDto> positionDtos = employeeManager.listPositions();
+		Collection<PositionDto> positionDtos = positionManager.listPositions();
 
 		// the removed position is not shown
 		assertThat(positionDtos).isEmpty();
@@ -197,7 +199,7 @@ public class EmployeeAcceptanceTest {
 	@Test
 	public void shouldNotAddEmployeeWithNonexistentPosition() {
 		// given the position is not in the system
-		assertThat(catchThrowable(() -> employeeManager.getPositionOrThrow(NON_EXISTENT_POSITION_ID)))
+		assertThat(catchThrowable(() -> positionManager.getPositionOrThrow(NON_EXISTENT_POSITION_ID)))
 				.isInstanceOf(PositionNotFoundException.class);
 		// and a command that refers to that nonexistent position
 		AddEmployeeCommand command = given.validAddEmployeeCommand();

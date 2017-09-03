@@ -9,15 +9,19 @@ import java.util.Collection;
 public class EmployeePreparer {
 
 	private final EmployeeManager employeeManager;
+	private final PositionManager positionManager;
 
 	public static EmployeePreparer withInternalEmployeeManager() {
-		return new EmployeePreparer(new EmployeeConfiguration().employeeManager());
+		EmployeeConfiguration configuration = new EmployeeConfiguration();
+		PositionManager positionManager = configuration.positionManager();
+		EmployeeManager employeeManager = configuration.employeeManager(positionManager);
+		return new EmployeePreparer(employeeManager, positionManager);
 	}
 
 	PositionDto newPositionIsAdded() {
-		Collection<PositionDto> beforePositions = employeeManager.listPositions();
-		employeeManager.addPosition(validAddPositionCommand());
-		return employeeManager.listPositions().stream()
+		Collection<PositionDto> beforePositions = positionManager.listPositions();
+		positionManager.addPosition(validAddPositionCommand());
+		return positionManager.listPositions().stream()
 				.filter(positionDto -> !beforePositions.contains(positionDto))
 				.findAny().orElseThrow(IllegalStateException::new);
 	}
