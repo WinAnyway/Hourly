@@ -7,17 +7,15 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import pl.przygudzki.hourly.employee.dto.AddEmployeeCommand;
 
-import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StandardEmployeeManagerTest {
 
 	private static final long POSITION_ID = 123L;
+
+	private CommandPreparer given = new CommandPreparer();
 
 	@Mock
 	private PositionManager positionManager;
@@ -25,10 +23,9 @@ public class StandardEmployeeManagerTest {
 	@Mock
 	private EmployeeRepository employeeRepository;
 
-	private Position position;
-
 	private EmployeeManager employeeManager;
-	private EmployeePreparer given = EmployeePreparer.withInternalEmployeeManager();
+
+	private Position position;
 	private AddEmployeeCommand command;
 
 	@Before

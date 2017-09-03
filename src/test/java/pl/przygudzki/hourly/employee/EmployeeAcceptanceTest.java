@@ -22,11 +22,12 @@ public class EmployeeAcceptanceTest {
 	private EmployeeManager employeeManager = new EmployeeConfiguration().employeeManager(positionManager);
 
 	private EmployeePreparer given = new EmployeePreparer(employeeManager, positionManager);
+	private CommandPreparer givenCommand = new CommandPreparer();
 
 	@Test
 	public void shouldAddPosition() {
 		// given a valid AddPositionCommand
-		AddPositionCommand command = given.validAddPositionCommand();
+		AddPositionCommand command = givenCommand.validAddPositionCommand();
 
 		// when we add a position to the system
 		positionManager.addPosition(command);
@@ -52,7 +53,7 @@ public class EmployeeAcceptanceTest {
 	@Test
 	public void shouldNotAddPositionWithInvalidData() {
 		// given a command with invalid data
-		AddPositionCommand command = given.validAddPositionCommand();
+		AddPositionCommand command = givenCommand.validAddPositionCommand();
 		command.setTitle("");
 
 		Throwable thrown = catchThrowable(() -> positionManager.addPosition(command));
@@ -64,9 +65,9 @@ public class EmployeeAcceptanceTest {
 	@Test
 	public void shouldListPositions() {
 		// given two Positions added to the system
-		AddPositionCommand command1 = given.validAddPositionCommand();
+		AddPositionCommand command1 = givenCommand.validAddPositionCommand();
 		positionManager.addPosition(command1);
-		AddPositionCommand command2 = given.anotherValidAddPositionCommand();
+		AddPositionCommand command2 = givenCommand.anotherValidAddPositionCommand();
 		positionManager.addPosition(command2);
 
 		// when we list Positions that exist in the system
@@ -103,10 +104,10 @@ public class EmployeeAcceptanceTest {
 	@Test
 	public void shouldEditPosition() {
 		// given a Position that exists within the system
-		positionManager.addPosition(given.validAddPositionCommand());
+		positionManager.addPosition(givenCommand.validAddPositionCommand());
 		PositionDto positionDto = new LinkedList<>(positionManager.listPositions()).getFirst();
 		// and an EditPositionCommand to edit that position
-		EditPositionCommand command = given.editPositionCommandFromPositionDto(positionDto);
+		EditPositionCommand command = givenCommand.editPositionCommandFromPositionDto(positionDto);
 		String newTitle = "Barista";
 		command.setTitle(newTitle);
 
@@ -121,7 +122,7 @@ public class EmployeeAcceptanceTest {
 	@Test
 	public void shouldRemovePosition() {
 		// given a Position exists within the system
-		positionManager.addPosition(given.validAddPositionCommand());
+		positionManager.addPosition(givenCommand.validAddPositionCommand());
 		PositionDto positionDto = new LinkedList<>(positionManager.listPositions()).getFirst();
 
 		// when we remove the Position
@@ -135,7 +136,7 @@ public class EmployeeAcceptanceTest {
 	@Test
 	public void shouldNotListRemovedPositions() {
 		// given a Position that was removed from the system
-		positionManager.addPosition(given.validAddPositionCommand());
+		positionManager.addPosition(givenCommand.validAddPositionCommand());
 		PositionDto positionDto = new LinkedList<>(positionManager.listPositions()).getFirst();
 		positionManager.removePosition(positionDto.getId());
 		assertThat(catchThrowable(() -> positionManager.getPositionOrThrow(positionDto.getId())))
@@ -156,16 +157,13 @@ public class EmployeeAcceptanceTest {
 		// we get an id of the desired position
 		Long positionId = positionDto.getId();
 		// and given a valid AddEmployeeCommand referencing the position
-		AddEmployeeCommand command = given.validAddEmployeeCommand(positionId);
+		AddEmployeeCommand command = givenCommand.validAddEmployeeCommand(positionId);
 
 		// when we add an employee
 		employeeManager.addEmployee(command);
 
 		// then the employee exists in the system
-		List<EmployeeDto> employeeDtos = new LinkedList<>(employeeManager.listEmployees());
-		assertThat(employeeDtos.size()).isEqualTo(1);
-		EmployeeDto employeeDto = employeeDtos.get(0);
-
+		Collection<EmployeeDto> employeeDtos = employeeManager.listEmployees();
 		assertThatEmployeeDtosReflectAddCommands(employeeDtos, command);
 	}
 
@@ -184,7 +182,7 @@ public class EmployeeAcceptanceTest {
 	@Test
 	public void shouldNotAddEmployeeWithInvalidData() {
 		// given a command with invalid data
-		AddEmployeeCommand command = given.validAddEmployeeCommand();
+		AddEmployeeCommand command = givenCommand.validAddEmployeeCommand();
 		command.setFirstName("");
 		command.setLastName("");
 		command.setPositionId(null);
@@ -202,7 +200,7 @@ public class EmployeeAcceptanceTest {
 		assertThat(catchThrowable(() -> positionManager.getPositionOrThrow(NON_EXISTENT_POSITION_ID)))
 				.isInstanceOf(PositionNotFoundException.class);
 		// and a command that refers to that nonexistent position
-		AddEmployeeCommand command = given.validAddEmployeeCommand();
+		AddEmployeeCommand command = givenCommand.validAddEmployeeCommand();
 		command.setPositionId(NON_EXISTENT_POSITION_ID);
 
 		// when we try to add an employee
@@ -216,8 +214,8 @@ public class EmployeeAcceptanceTest {
 	public void shouldListEmployees() {
 		// given the employee exists in the system
 		Long positionId = given.newPositionIsAdded().getId();
-		AddEmployeeCommand command1 = given.validAddEmployeeCommand(positionId);
-		AddEmployeeCommand command2 = given.anotherValidAddEmployeeCommand(positionId);
+		AddEmployeeCommand command1 = givenCommand.validAddEmployeeCommand(positionId);
+		AddEmployeeCommand command2 = givenCommand.anotherValidAddEmployeeCommand(positionId);
 		employeeManager.addEmployee(command1);
 		employeeManager.addEmployee(command2);
 

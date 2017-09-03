@@ -31,6 +31,7 @@ public class AddEmployeeCommand implements Validatable {
 
 	private void validatePosition(ValidationErrors errors) {
 		if (isNull(positionId))
+			//TODO fix the "positionTitle" bullshit
 			errors.add("positionTitle", REQUIRED_FIELD);
 	}
 

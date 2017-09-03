@@ -3,7 +3,6 @@ package pl.przygudzki.hourly.employee;
 import org.junit.Before;
 import org.junit.Test;
 import pl.przygudzki.hourly.commons.commands.Validatable;
-import pl.przygudzki.hourly.employee.EmployeePreparer;
 import pl.przygudzki.hourly.employee.dto.AddEmployeeCommand;
 
 import static pl.przygudzki.hourly.commons.commands.ValidationErrorsAssertion.assertThat;
@@ -12,7 +11,7 @@ public class AddEmployeeCommandTest {
 
 	private static final String REQUIRED_FIELD = "is a required field and can't be empty";
 
-	private EmployeePreparer given = EmployeePreparer.withInternalEmployeeManager();
+	private CommandPreparer given = new CommandPreparer();
 
 	private AddEmployeeCommand command;
 	private Validatable.ValidationErrors errors;
