@@ -5,7 +5,6 @@ import pl.przygudzki.hourly.commons.commands.Validatable;
 import pl.przygudzki.hourly.employee.dto.*;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 class StandardEmployeeManager implements EmployeeManager {
@@ -24,6 +23,12 @@ class StandardEmployeeManager implements EmployeeManager {
 		Position position = getPositionOrThrow(command.getPositionId());
 		Employee employee = Employee.create(command, position);
 		employeeRepository.put(employee);
+	}
+
+	@Override
+	public Employee getEmployeeOrThrow(Long employeeId) {
+		return employeeRepository.get(EmployeeId.of(employeeId))
+				.orElseThrow(() -> new EmployeeNotFoundException(employeeId));
 	}
 
 	@Override

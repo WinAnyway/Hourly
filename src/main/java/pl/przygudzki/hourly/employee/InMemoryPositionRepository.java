@@ -12,13 +12,13 @@ class InMemoryPositionRepository implements PositionRepository {
 	}
 
 	@Override
-	public List<Position> getAll() {
-		return new LinkedList<>(positions.values());
+	public Optional<Position> get(PositionId id) {
+		return Optional.ofNullable(positions.get(id));
 	}
 
 	@Override
-	public Optional<Position> get(PositionId id) {
-		return Optional.ofNullable(positions.get(id));
+	public List<Position> getAll() {
+		return new LinkedList<>(positions.values());
 	}
 
 }
