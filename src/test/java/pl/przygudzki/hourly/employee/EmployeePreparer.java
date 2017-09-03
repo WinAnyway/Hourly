@@ -5,7 +5,7 @@ import pl.przygudzki.hourly.employee.dto.AddPositionCommand;
 import pl.przygudzki.hourly.employee.dto.EditPositionCommand;
 import pl.przygudzki.hourly.employee.dto.PositionDto;
 
-class EmployeePreparer {
+public class EmployeePreparer {
 
 	AddEmployeeCommand validAddEmployeeCommand() {
 		AddEmployeeCommand command = new AddEmployeeCommand();
@@ -27,10 +27,15 @@ class EmployeePreparer {
 		return command;
 	}
 
+	EditPositionCommand validEditPositionCommand() {
+		EditPositionCommand command = new EditPositionCommand();
+		command.setTitle("Barista");
+		return command;
+	}
+
 	EditPositionCommand editPositionCommandFromPositionDto(PositionDto positionDto) {
 		EditPositionCommand command = new EditPositionCommand();
 		command.setTitle(positionDto.getTitle());
 		return command;
 	}
-
 }

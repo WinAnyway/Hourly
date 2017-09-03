@@ -16,8 +16,8 @@ public class AddPositionCommand implements Validatable {
 
 	@Override
 	public void validate(ValidationErrors errors) {
-		if(isNullOrEmpty(title))
-			errors.add("name", REQUIRED_FIELD);
+		if (isNullOrEmpty(title))
+			errors.add("title", REQUIRED_FIELD);
 	}
 
 }

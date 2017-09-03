@@ -12,7 +12,8 @@ public class EditPositionCommand implements Validatable {
 
 	@Override
 	public void validate(ValidationErrors errors) {
-
+		if (isNullOrEmpty(title))
+			errors.add("title", REQUIRED_FIELD);
 	}
 
 }
