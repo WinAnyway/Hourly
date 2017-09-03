@@ -14,8 +14,9 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 public class EmployeeAcceptanceTest {
 
 	private static final long NON_EXISTENT_POSITION_ID = 123L;
-	private EmployeePreparer given = new EmployeePreparer();
+
 	private EmployeeManager employeeManager = new EmployeeConfiguration().employeeManager();
+	private EmployeePreparer given = new EmployeePreparer(employeeManager);
 
 	@Test
 	public void shouldAddPosition() {
@@ -59,8 +60,8 @@ public class EmployeeAcceptanceTest {
 	public void shouldListPositions() {
 		// given two Positions added to the system
 		AddPositionCommand command1 = given.validAddPositionCommand();
-		AddPositionCommand command2 = given.anotherValidAddPositionCommand();
 		employeeManager.addPosition(command1);
+		AddPositionCommand command2 = given.anotherValidAddPositionCommand();
 		employeeManager.addPosition(command2);
 
 		// when we list Positions that exist in the system
@@ -74,10 +75,10 @@ public class EmployeeAcceptanceTest {
 
 	@Test
 	public void shouldEditPosition() {
-		// given a Position exists within the system
+		// given a Position that exists within the system
 		employeeManager.addPosition(given.validAddPositionCommand());
 		PositionDto positionDto = new LinkedList<>(employeeManager.listPositions()).getFirst();
-		// and an EditPositionCommand that edits that position
+		// and an EditPositionCommand to edit that position
 		EditPositionCommand command = given.editPositionCommandFromPositionDto(positionDto);
 		String newTitle = "Barista";
 		command.setTitle(newTitle);
@@ -122,19 +123,17 @@ public class EmployeeAcceptanceTest {
 
 	@Test
 	public void shouldAddEmployee() {
-		// given a valid AddEmployeeCommand
-		AddEmployeeCommand command = given.validAddEmployeeCommand();
-		// and that a suitable position exists in the system
-		employeeManager.addPosition(given.validAddPositionCommand());
-		// we get the id of desired position
-		Long positionId = new LinkedList<>(employeeManager.listPositions()).getFirst().getId();
-		// and we apply it to the command
-		command.setPositionId(positionId);
+		// given a position exists in the system
+		PositionDto positionDto = given.newPositionIsAdded();
+		// we get an id of the desired position
+		Long positionId = positionDto.getId();
+		// and given a valid AddEmployeeCommand referencing the position
+		AddEmployeeCommand command = given.validAddEmployeeCommand(positionId);
 
 		// when we add an employee
 		employeeManager.addEmployee(command);
 
-		// then system has employee
+		// then system has the employee
 		Collection<EmployeeDto> employeeDtos = employeeManager.listEmployees();
 		assertThat(employeeDtos.size()).isEqualTo(1);
 	}
@@ -167,7 +166,7 @@ public class EmployeeAcceptanceTest {
 	}
 
 	@Test
-	public void shouldNotAddEmployeeWithPositionNotAddedToSystem() {
+	public void shouldNotAddEmployeeWithNonexistentPosition() {
 		// given the position is not in the system
 		assertThat(catchThrowable(() -> employeeManager.getPositionOrThrow(NON_EXISTENT_POSITION_ID)))
 				.isInstanceOf(PositionNotFoundException.class);
@@ -182,4 +181,20 @@ public class EmployeeAcceptanceTest {
 		assertThat(thrown).isInstanceOf(PositionNotFoundException.class);
 	}
 
+	@Test
+	public void shouldListEmployees() {
+		// given the employee exists in the system
+		Long positionId = given.newPositionIsAdded().getId();
+		AddEmployeeCommand command1 = given.validAddEmployeeCommand(positionId);
+		command1.setPositionId(positionId);
+		AddEmployeeCommand command2 = given.anotherValidAddEmployeeCommand();
+		command2.setPositionId(positionId);
+		employeeManager.addEmployee(command1);
+		employeeManager.addEmployee(command2);
+
+		// when we list all employees
+		Collection<EmployeeDto> employeeDtos = employeeManager.listEmployees();
+
+		//
+	}
 }
