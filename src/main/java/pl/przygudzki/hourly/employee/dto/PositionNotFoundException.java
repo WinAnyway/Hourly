@@ -7,6 +7,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class PositionNotFoundException extends RuntimeException {
 
-	private final String title;
+	private final Long positionId;
 
 }

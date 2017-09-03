@@ -1,10 +1,12 @@
 package pl.przygudzki.hourly.employee;
 
 import pl.przygudzki.hourly.employee.dto.EmployeeDto;
+import pl.przygudzki.hourly.employee.dto.PositionDto;
 
 class EmployeeDtoBuilder implements EmployeeExporter {
 
 	private EmployeeDto dto = new EmployeeDto();
+	private final PositionDtoBuilder builder = new PositionDtoBuilder();
 
 	EmployeeDto build() {
 		EmployeeDto result = dto;
@@ -29,7 +31,9 @@ class EmployeeDtoBuilder implements EmployeeExporter {
 
 	@Override
 	public void exportPosition(Position position) {
-		dto.setPosition(position.getTitle());
+		position.export(builder);
+		PositionDto positionDto = builder.build();
+		dto.setPosition(positionDto.getTitle());
 	}
 
 }

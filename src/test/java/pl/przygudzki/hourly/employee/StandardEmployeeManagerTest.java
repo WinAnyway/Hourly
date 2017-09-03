@@ -17,11 +17,16 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class StandardEmployeeManagerTest {
 
+	private static final long POSITION_ID = 123L;
+
 	@Mock
 	private EmployeeRepository employeeRepository;
 
 	@Mock
 	private PositionRepository positionRepository;
+
+	@Mock
+	private Position position;
 
 	private EmployeeManager employeeManager;
 	private EmployeePreparer given = new EmployeePreparer();
@@ -35,9 +40,8 @@ public class StandardEmployeeManagerTest {
 
 	@Test
 	public void shouldCreateAndPersistEmployeeOnAdd() {
-		String title = "Manager";
-		command.setPositionTitle(title);
-		when(positionRepository.get(title)).thenReturn(Optional.of(Position.of(title)));
+		command.setPositionId(POSITION_ID);
+		when(positionRepository.get(PositionId.of(POSITION_ID))).thenReturn(Optional.of(position));
 
 		employeeManager.addEmployee(command);
 

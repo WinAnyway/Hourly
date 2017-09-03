@@ -4,11 +4,11 @@ import java.util.*;
 
 class InMemoryPositionRepository implements PositionRepository {
 
-	private HashMap<String, Position> positions = new HashMap<>();
+	private HashMap<PositionId, Position> positions = new HashMap<>();
 
 	@Override
 	public void put(Position position) {
-		positions.put(position.getTitle(), position);
+		positions.put(position.getId(), position);
 	}
 
 	@Override
@@ -17,8 +17,8 @@ class InMemoryPositionRepository implements PositionRepository {
 	}
 
 	@Override
-	public Optional<Position> get(String title) {
-		return Optional.ofNullable(positions.get(title));
+	public Optional<Position> get(PositionId id) {
+		return Optional.ofNullable(positions.get(id));
 	}
 
 }

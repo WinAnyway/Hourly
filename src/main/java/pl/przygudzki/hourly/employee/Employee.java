@@ -19,8 +19,13 @@ class Employee {
 		this.lastName = lastName;
 	}
 
-	static Employee create(AddEmployeeCommand command) {
-		return new Employee(EmployeeId.generate(), command.getPosition(), command.getFirstName(), command.getLastName());
+	static Employee create(AddEmployeeCommand command, Position position) {
+		return new Employee(
+				EmployeeId.generate(),
+				position,
+				command.getFirstName(),
+				command.getLastName()
+		);
 	}
 
 	void export(EmployeeDtoBuilder exporter) {

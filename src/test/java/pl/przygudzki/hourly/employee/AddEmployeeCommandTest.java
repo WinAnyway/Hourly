@@ -31,16 +31,7 @@ public class AddEmployeeCommandTest {
 
 	@Test
 	public void shouldInvalidateWhenPositionIsNull() {
-		command.setPositionTitle(null);
-
-		command.validate(errors);
-
-		assertThat(errors).hasExactly(1).errors("positionTitle", REQUIRED_FIELD);
-	}
-
-	@Test
-	public void shouldInvalidateWhenPositionNameIsEmpty() {
-		command.setPositionTitle("");
+		command.setPositionId(null);
 
 		command.validate(errors);
 

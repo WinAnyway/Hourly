@@ -7,7 +7,7 @@ class EmployeePreparer {
 
 	AddEmployeeCommand validAddEmployeeCommand() {
 		AddEmployeeCommand command = new AddEmployeeCommand();
-		command.setPositionTitle("Manager");
+		command.setPositionId(1L);
 		command.setFirstName("John");
 		command.setLastName("Doe");
 		return command;

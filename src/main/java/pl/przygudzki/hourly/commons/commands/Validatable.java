@@ -15,6 +15,10 @@ public interface Validatable {
 		return s == null || s.trim().isEmpty();
 	}
 
+	default boolean isNull(Object o) {
+		return o == null;
+	}
+
 	class ValidationErrors {
 
 		private Map<String, Set<String>> errors = new HashMap<>();

@@ -9,6 +9,6 @@ interface PositionRepository {
 
 	List<Position> getAll();
 
-	Optional<Position> get(String title);
+	Optional<Position> get(PositionId id);
 
 }

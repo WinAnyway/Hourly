@@ -8,6 +8,7 @@ import pl.przygudzki.hourly.employee.dto.EmployeeDto;
 import pl.przygudzki.hourly.employee.dto.PositionDto;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -73,6 +74,10 @@ public class EmployeeAcceptanceTest {
 		AddEmployeeCommand command = given.validAddEmployeeCommand();
 		// and that a suitable position exists in the system
 		employeeManager.addPosition(given.validAddPositionCommand());
+		// we get the id of desired position
+		Long positionId = new LinkedList<>(employeeManager.listPositions()).getFirst().getId();
+		// and we apply it to the command
+		command.setPositionId(positionId);
 
 		// when we add an employee
 		employeeManager.addEmployee(command);
@@ -100,7 +105,7 @@ public class EmployeeAcceptanceTest {
 		AddEmployeeCommand command = given.validAddEmployeeCommand();
 		command.setFirstName("");
 		command.setLastName("");
-		command.setPositionTitle(null);
+		command.setPositionId(null);
 
 		Throwable thrown = catchThrowable(() -> employeeManager.addEmployee(command));
 

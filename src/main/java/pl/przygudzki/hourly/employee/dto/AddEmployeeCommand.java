@@ -11,8 +11,7 @@ public class AddEmployeeCommand implements Validatable {
 
 	private String firstName;
 	private String lastName;
-	private String positionTitle;
-	private Position position;
+	private Long positionId;
 
 	@Override
 	public void validate(ValidationErrors errors) {
@@ -32,7 +31,7 @@ public class AddEmployeeCommand implements Validatable {
 	}
 
 	private void validatePosition(ValidationErrors errors) {
-		if (isNullOrEmpty(positionTitle))
+		if (isNull(positionId))
 			errors.add("positionTitle", REQUIRED_FIELD);
 	}
 
