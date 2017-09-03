@@ -6,9 +6,11 @@ import pl.przygudzki.hourly.employee.dto.AddPositionCommand;
 @EqualsAndHashCode
 public class Position {
 
-	private final String title;
+	private PositionId id;
+	private String title;
 
 	private Position(String position) {
+		this.id = PositionId.generate();
 		this.title = position;
 	}
 
@@ -22,6 +24,11 @@ public class Position {
 
 	static Position of(String title) {
 		return new Position(title);
+	}
+
+	void export(PositionExporter exporter) {
+		exporter.exportId(id);
+		exporter.exportTitle(title);
 	}
 
 }

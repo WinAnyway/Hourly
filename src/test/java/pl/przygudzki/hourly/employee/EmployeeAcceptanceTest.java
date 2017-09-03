@@ -5,6 +5,7 @@ import pl.przygudzki.hourly.commons.commands.InvalidCommandException;
 import pl.przygudzki.hourly.employee.dto.AddEmployeeCommand;
 import pl.przygudzki.hourly.employee.dto.AddPositionCommand;
 import pl.przygudzki.hourly.employee.dto.EmployeeDto;
+import pl.przygudzki.hourly.employee.dto.PositionDto;
 
 import java.util.Collection;
 
@@ -25,8 +26,8 @@ public class EmployeeAcceptanceTest {
 		employeeManager.addPosition(command);
 
 		// then system has a positionTitle
-		Collection<Position> positions = employeeManager.listPositions();
-		assertThat(positions.size()).isEqualTo(1);
+		Collection<PositionDto> positionDtos = employeeManager.listPositions();
+		assertThat(positionDtos.size()).isEqualTo(1);
 	}
 
 	@Test
@@ -60,7 +61,7 @@ public class EmployeeAcceptanceTest {
 		employeeManager.addPosition(given.anotherValidAddPositionCommand());
 
 		// when we list available positions
-		Collection<Position> positions = employeeManager.listPositions();
+		Collection<PositionDto> positions = employeeManager.listPositions();
 
 		// then system returns a list of two positions
 		assertThat(positions.size()).isEqualTo(2);

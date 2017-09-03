@@ -2,7 +2,7 @@ package pl.przygudzki.hourly.employee;
 
 import pl.przygudzki.hourly.employee.dto.EmployeeDto;
 
-public class EmployeeDtoBuilder implements EmployeeExporter {
+class EmployeeDtoBuilder implements EmployeeExporter {
 
 	private EmployeeDto dto = new EmployeeDto();
 

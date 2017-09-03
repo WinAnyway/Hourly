@@ -2,18 +2,12 @@ package pl.przygudzki.hourly.employee;
 
 import pl.przygudzki.hourly.commons.commands.InvalidCommandException;
 import pl.przygudzki.hourly.commons.commands.Validatable;
-import pl.przygudzki.hourly.employee.dto.AddEmployeeCommand;
-import pl.przygudzki.hourly.employee.dto.AddPositionCommand;
-import pl.przygudzki.hourly.employee.dto.EmployeeDto;
-import pl.przygudzki.hourly.employee.dto.PositionNotFoundException;
+import pl.przygudzki.hourly.employee.dto.*;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 class StandardEmployeeManager implements EmployeeManager {
-
-	private final EmployeeDtoBuilder employeeDtoBuilder = new EmployeeDtoBuilder();
 
 	private EmployeeRepository employeeRepository;
 	private PositionRepository positionRepository;
@@ -35,10 +29,11 @@ class StandardEmployeeManager implements EmployeeManager {
 
 	@Override
 	public Collection<EmployeeDto> listEmployees() {
+		final EmployeeDtoBuilder dtoBuilder = new EmployeeDtoBuilder();
 		return employeeRepository.getAll().stream()
 				.map(employee -> {
-					employee.export(employeeDtoBuilder);
-					return employeeDtoBuilder.build();
+					employee.export(dtoBuilder);
+					return dtoBuilder.build();
 				})
 				.collect(Collectors.toList());
 	}
@@ -51,8 +46,14 @@ class StandardEmployeeManager implements EmployeeManager {
 	}
 
 	@Override
-	public List<Position> listPositions() {
-		return positionRepository.getAll();
+	public Collection<PositionDto> listPositions() {
+		final PositionDtoBuilder dtoBuilder = new PositionDtoBuilder();
+		return positionRepository.getAll().stream()
+				.map(position -> {
+					position.export(dtoBuilder);
+					return dtoBuilder.build();
+				})
+				.collect(Collectors.toList());
 	}
 
 	private void validateCommand(Validatable command) {
