@@ -42,6 +42,7 @@ public class StandardEmployeeManagerTest {
 	public void shouldCreateAndPersistEmployeeOnAdd() {
 		command.setPositionId(POSITION_ID);
 		when(positionRepository.get(PositionId.of(POSITION_ID))).thenReturn(Optional.of(position));
+		when(position.isAvailable()).thenReturn(true);
 
 		employeeManager.addEmployee(command);
 

@@ -2,6 +2,8 @@ package pl.przygudzki.hourly.employee;
 
 import pl.przygudzki.hourly.employee.dto.AddEmployeeCommand;
 import pl.przygudzki.hourly.employee.dto.AddPositionCommand;
+import pl.przygudzki.hourly.employee.dto.EditPositionCommand;
+import pl.przygudzki.hourly.employee.dto.PositionDto;
 
 class EmployeePreparer {
 
@@ -22,6 +24,12 @@ class EmployeePreparer {
 	AddPositionCommand anotherValidAddPositionCommand() {
 		AddPositionCommand command = new AddPositionCommand();
 		command.setTitle("Copywriter");
+		return command;
+	}
+
+	EditPositionCommand editPositionCommandFromPositionDto(PositionDto positionDto) {
+		EditPositionCommand command = new EditPositionCommand();
+		command.setTitle(positionDto.getTitle());
 		return command;
 	}
 

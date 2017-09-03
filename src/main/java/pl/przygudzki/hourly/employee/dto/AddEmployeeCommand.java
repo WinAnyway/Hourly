@@ -3,7 +3,6 @@ package pl.przygudzki.hourly.employee.dto;
 import lombok.Getter;
 import lombok.Setter;
 import pl.przygudzki.hourly.commons.commands.Validatable;
-import pl.przygudzki.hourly.employee.Position;
 
 @Getter
 @Setter

@@ -1,9 +1,6 @@
 package pl.przygudzki.hourly.employee;
 
-import pl.przygudzki.hourly.employee.dto.AddEmployeeCommand;
-import pl.przygudzki.hourly.employee.dto.AddPositionCommand;
-import pl.przygudzki.hourly.employee.dto.EmployeeDto;
-import pl.przygudzki.hourly.employee.dto.PositionDto;
+import pl.przygudzki.hourly.employee.dto.*;
 
 import java.util.Collection;
 
@@ -15,6 +12,12 @@ public interface EmployeeManager {
 
 	void addPosition(AddPositionCommand command);
 
+	Position getPositionOrThrow(Long positionId);
+
 	Collection<PositionDto> listPositions();
+
+	void editPosition(EditPositionCommand command, Long id);
+
+	void removePosition(Long id);
 
 }

@@ -44,15 +44,30 @@ class StandardEmployeeManager implements EmployeeManager {
 		positionRepository.put(position);
 	}
 
-	private Position getPositionOrThrow(Long positionId) {
+	@Override
+	public Position getPositionOrThrow(Long positionId) {
 		return positionRepository.get(PositionId.of(positionId))
+				.filter(Position::isAvailable)
 				.orElseThrow(() -> new PositionNotFoundException(positionId));
+	}
+
+	@Override
+	public void editPosition(EditPositionCommand command, Long id) {
+		Position position = getPositionOrThrow(id);
+		position.edit(command);
+	}
+
+	@Override
+	public void removePosition(Long id) {
+		Position position = getPositionOrThrow(id);
+		position.remove();
 	}
 
 	@Override
 	public Collection<PositionDto> listPositions() {
 		final PositionDtoBuilder dtoBuilder = new PositionDtoBuilder();
 		return positionRepository.getAll().stream()
+				.filter(Position::isAvailable)
 				.map(position -> {
 					position.export(dtoBuilder);
 					return dtoBuilder.build();
