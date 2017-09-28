@@ -3,11 +3,11 @@ package pl.przygudzki.hourly.employee;
 import org.junit.Before;
 import org.junit.Test;
 import pl.przygudzki.hourly.commons.commands.Validatable;
-import pl.przygudzki.hourly.employee.dto.AddEmployeeCommand;
+import pl.przygudzki.hourly.employee.dto.EditEmployeeCommand;
 
 import static pl.przygudzki.hourly.commons.commands.ValidationErrorsAssertion.assertThat;
 
-public class AddEmployeeCommandTest {
+public class EditEmployeeCommandTest {
 
 	private static final String REQUIRED_FIELD = "is a required field and can't be empty";
 	private static final String POSITION_ID_FIELD = "positionId";
@@ -16,12 +16,12 @@ public class AddEmployeeCommandTest {
 
 	private EmployeeCommandPreparer given = new EmployeeCommandPreparer();
 
-	private AddEmployeeCommand command;
+	private EditEmployeeCommand command;
 	private Validatable.ValidationErrors errors;
 
 	@Before
 	public void setUp() throws Exception {
-		command = given.validAddEmployeeCommand();
+		command = given.validEditEmployeeCommand();
 		errors = new Validatable.ValidationErrors();
 	}
 

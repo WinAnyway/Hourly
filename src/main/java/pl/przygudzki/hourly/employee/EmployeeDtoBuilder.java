@@ -1,12 +1,19 @@
 package pl.przygudzki.hourly.employee;
 
 import pl.przygudzki.hourly.employee.dto.EmployeeDto;
-import pl.przygudzki.hourly.employee.dto.PositionDto;
+import pl.przygudzki.hourly.position.dto.PositionDto;
+import pl.przygudzki.hourly.position.PositionId;
+import pl.przygudzki.hourly.position.PositionManager;
 
 class EmployeeDtoBuilder implements EmployeeExporter {
 
+	private PositionManager positionManager;
+
 	private EmployeeDto dto = new EmployeeDto();
-	private final PositionDtoBuilder builder = new PositionDtoBuilder();
+
+	EmployeeDtoBuilder(PositionManager positionManager) {
+		this.positionManager = positionManager;
+	}
 
 	EmployeeDto build() {
 		EmployeeDto result = dto;
@@ -16,7 +23,12 @@ class EmployeeDtoBuilder implements EmployeeExporter {
 
 	@Override
 	public void exportId(EmployeeId id) {
-		dto.setId(id.getId());
+		dto.setId(id);
+	}
+
+	@Override
+	public void exportStatus(EmployeeStatus status) {
+		dto.setStatus(status.toString());
 	}
 
 	@Override
@@ -30,9 +42,8 @@ class EmployeeDtoBuilder implements EmployeeExporter {
 	}
 
 	@Override
-	public void exportPosition(Position position) {
-		position.export(builder);
-		PositionDto positionDto = builder.build();
+	public void exportPositionId(PositionId positionId) {
+		PositionDto positionDto = positionManager.getPosition(positionId);
 		dto.setPosition(positionDto);
 	}
 

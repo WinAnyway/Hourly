@@ -8,8 +8,12 @@ public interface EmployeeManager {
 
 	void addEmployee(AddEmployeeCommand cmd);
 
-	Employee getEmployeeOrThrow(Long employeeId);
+	EmployeeDto getEmployee(EmployeeId employeeId);
 
 	Collection<EmployeeDto> listEmployees();
+
+	void editEmployee(EmployeeId employeeId, EditEmployeeCommand command);
+
+	void removeEmployee(EmployeeId employeeId);
 
 }

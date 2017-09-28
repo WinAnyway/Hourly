@@ -1,15 +1,12 @@
 package pl.przygudzki.hourly.shift;
 
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Embeddable;
-import java.io.Serializable;
-import java.util.UUID;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@Embeddable
-class ShiftId implements Serializable {
+@EqualsAndHashCode
+public class ShiftId {
 
 	private static long idSequencePointer = 0;
 
@@ -21,6 +18,10 @@ class ShiftId implements Serializable {
 
 	static ShiftId generate() {
 		return new ShiftId(++idSequencePointer);
+	}
+
+	static ShiftId of(Long id) {
+		return new ShiftId(id);
 	}
 
 }

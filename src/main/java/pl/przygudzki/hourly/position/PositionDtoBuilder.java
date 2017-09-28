@@ -1,6 +1,6 @@
-package pl.przygudzki.hourly.employee;
+package pl.przygudzki.hourly.position;
 
-import pl.przygudzki.hourly.employee.dto.PositionDto;
+import pl.przygudzki.hourly.position.dto.PositionDto;
 
 class PositionDtoBuilder implements PositionExporter {
 
@@ -13,13 +13,18 @@ class PositionDtoBuilder implements PositionExporter {
 	}
 
 	@Override
-	public void exportId(PositionId id) {
-		dto.setId(id.getId());
+	public void exportId(PositionId positionId) {
+		dto.setId(positionId);
 	}
 
 	@Override
 	public void exportTitle(String title) {
 		dto.setTitle(title);
+	}
+
+	@Override
+	public void exportStatus(PositionStatus status) {
+		dto.setStatus(status.toString());
 	}
 
 }

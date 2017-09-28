@@ -1,8 +1,10 @@
 package pl.przygudzki.hourly.employee;
 
 import lombok.AllArgsConstructor;
+import pl.przygudzki.hourly.employee.dto.AddEmployeeCommand;
 import pl.przygudzki.hourly.employee.dto.EmployeeDto;
-import pl.przygudzki.hourly.employee.dto.PositionDto;
+import pl.przygudzki.hourly.position.PositionId;
+import pl.przygudzki.hourly.position.PositionPreparer;
 
 import java.util.Collection;
 
@@ -10,31 +12,31 @@ import java.util.Collection;
 public class EmployeePreparer {
 
 	private final EmployeeManager employeeManager;
-	private final PositionManager positionManager;
 
-	private final CommandPreparer given = new CommandPreparer();
+	private final PositionPreparer givenPosition;
+	private final EmployeeCommandPreparer given = new EmployeeCommandPreparer();
 
-	public static EmployeePreparer withInternalizedDependencies() {
-		EmployeeConfiguration configuration = new EmployeeConfiguration();
-		PositionManager positionManager = configuration.positionManager();
-		EmployeeManager employeeManager = configuration.employeeManager(positionManager);
-		return new EmployeePreparer(employeeManager, positionManager);
+	public EmployeeDto newEmployeeIsAdded() {
+		PositionId positionId = givenPosition.newPositionIsAdded().getId();
+		return newEmployeeIsAdded(given.validAddEmployeeCommand(positionId));
 	}
 
-	PositionDto newPositionIsAdded() {
-		Collection<PositionDto> beforePositions = positionManager.listPositions();
-		positionManager.addPosition(given.validAddPositionCommand());
-		return positionManager.listPositions().stream()
-				.filter(positionDto -> !beforePositions.contains(positionDto))
-				.findAny().orElseThrow(IllegalStateException::new);
+	EmployeeDto newEmployeeIsAdded(PositionId positionId) {
+		return newEmployeeIsAdded(given.validAddEmployeeCommand(positionId));
 	}
 
-	EmployeeDto newEmployeeIsAdded(Long positionId) {
+	EmployeeDto newEmployeeIsAdded(AddEmployeeCommand command) {
 		Collection<EmployeeDto> beforeEmployees = employeeManager.listEmployees();
-		employeeManager.addEmployee(given.validAddEmployeeCommand(positionId));
+		employeeManager.addEmployee(command);
 		return employeeManager.listEmployees().stream()
 				.filter(employeeDto -> !beforeEmployees.contains(employeeDto))
 				.findAny().orElseThrow(IllegalStateException::new);
+	}
+
+	EmployeeId newRemovedEmployee(PositionId positionId) {
+		EmployeeId employeeId = newEmployeeIsAdded(positionId).getId();
+		employeeManager.removeEmployee(employeeId);
+		return employeeId;
 	}
 
 }

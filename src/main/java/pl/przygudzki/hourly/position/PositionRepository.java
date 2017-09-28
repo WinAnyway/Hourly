@@ -1,4 +1,4 @@
-package pl.przygudzki.hourly.employee;
+package pl.przygudzki.hourly.position;
 
 import java.util.List;
 import java.util.Optional;

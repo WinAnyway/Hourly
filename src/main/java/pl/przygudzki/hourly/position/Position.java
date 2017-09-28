@@ -1,10 +1,8 @@
-package pl.przygudzki.hourly.employee;
+package pl.przygudzki.hourly.position;
 
 import lombok.EqualsAndHashCode;
-import pl.przygudzki.hourly.employee.dto.AddPositionCommand;
-import pl.przygudzki.hourly.employee.dto.EditPositionCommand;
-
-import static pl.przygudzki.hourly.employee.PositionStatus.*;
+import pl.przygudzki.hourly.position.dto.AddPositionCommand;
+import pl.przygudzki.hourly.position.dto.EditPositionCommand;
 
 @EqualsAndHashCode
 class Position {
@@ -15,7 +13,7 @@ class Position {
 
 	private Position(String position) {
 		this.id = PositionId.generate();
-		this.status = AVAILABLE;
+		this.status = PositionStatus.AVAILABLE;
 		this.title = position;
 	}
 
@@ -30,6 +28,7 @@ class Position {
 	void export(PositionExporter exporter) {
 		exporter.exportId(id);
 		exporter.exportTitle(title);
+		exporter.exportStatus(status);
 	}
 
 	PositionId getId() {
@@ -37,10 +36,11 @@ class Position {
 	}
 
 	void remove() {
-		status = REMOVED;
+		status = PositionStatus.REMOVED;
 	}
 
 	boolean isAvailable() {
-		return status == AVAILABLE;
+		return status == PositionStatus.AVAILABLE;
 	}
+
 }

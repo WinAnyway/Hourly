@@ -1,12 +1,12 @@
-package pl.przygudzki.hourly.employee;
+package pl.przygudzki.hourly.position;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
-@EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-class PositionId {
+@EqualsAndHashCode
+public class PositionId {
 
 	private static long idSequenceCounter = 0;
 
@@ -16,12 +16,12 @@ class PositionId {
 		return new PositionId(++idSequenceCounter);
 	}
 
-	Long getId() {
-		return id;
-	}
-
 	static PositionId of(Long id) {
 		return new PositionId(id);
+	}
+
+	Long getId() {
+		return id;
 	}
 
 }

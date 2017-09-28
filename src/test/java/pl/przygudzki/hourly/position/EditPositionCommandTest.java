@@ -1,24 +1,24 @@
-package pl.przygudzki.hourly.employee;
+package pl.przygudzki.hourly.position;
 
 import org.junit.Before;
 import org.junit.Test;
 import pl.przygudzki.hourly.commons.commands.Validatable;
-import pl.przygudzki.hourly.employee.dto.AddPositionCommand;
+import pl.przygudzki.hourly.position.dto.EditPositionCommand;
 
 import static pl.przygudzki.hourly.commons.commands.ValidationErrorsAssertion.assertThat;
 
-public class AddPositionCommandTest {
+public class EditPositionCommandTest {
 
 	private static final String REQUIRED_FIELD = "is a required field and can't be empty";
 
-	private CommandPreparer given = new CommandPreparer();
+	private PositionCommandPreparer given = new PositionCommandPreparer();
 
-	private AddPositionCommand command;
+	private EditPositionCommand command;
 	private Validatable.ValidationErrors errors;
 
 	@Before
 	public void setUp() throws Exception {
-		command = given.validAddPositionCommand();
+		command = given.validEditPositionCommand();
 		errors = new Validatable.ValidationErrors();
 	}
 
@@ -30,7 +30,7 @@ public class AddPositionCommandTest {
 	}
 
 	@Test
-	public void shouldInvalidateWhenTitleIsNull() {
+	public void shouldInvalidateWhenFirstNameIsNull() {
 		command.setTitle(null);
 
 		command.validate(errors);
@@ -39,7 +39,7 @@ public class AddPositionCommandTest {
 	}
 
 	@Test
-	public void shouldInvalidateWhenTitleIsEmpty() {
+	public void shouldInvalidateWhenFirstNameIsEmpty() {
 		command.setTitle("");
 
 		command.validate(errors);

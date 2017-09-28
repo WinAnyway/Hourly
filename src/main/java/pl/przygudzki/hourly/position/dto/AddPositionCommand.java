@@ -1,14 +1,18 @@
-package pl.przygudzki.hourly.employee.dto;
+package pl.przygudzki.hourly.position.dto;
 
-import lombok.Getter;
-import lombok.Setter;
 import pl.przygudzki.hourly.commons.commands.Validatable;
 
-@Getter
-@Setter
-public class EditPositionCommand implements Validatable {
+public class AddPositionCommand implements Validatable {
 
 	private String title;
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 	@Override
 	public void validate(ValidationErrors errors) {

@@ -1,13 +1,18 @@
 package pl.przygudzki.hourly.employee;
 
+import org.junit.Before;
 import org.junit.Test;
 import pl.przygudzki.hourly.commons.commands.InvalidCommandException;
 import pl.przygudzki.hourly.employee.dto.*;
+import pl.przygudzki.hourly.position.PositionConfiguration;
+import pl.przygudzki.hourly.position.PositionId;
+import pl.przygudzki.hourly.position.PositionManager;
+import pl.przygudzki.hourly.position.PositionPreparer;
+import pl.przygudzki.hourly.position.dto.PositionDto;
+import pl.przygudzki.hourly.position.dto.PositionNotAvailableException;
+import pl.przygudzki.hourly.position.dto.PositionNotFoundException;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,149 +20,28 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 
 public class EmployeeAcceptanceTest {
 
-	private static final long NON_EXISTENT_POSITION_ID = 123L;
-	private static final long NON_EXISTENT_EMPLOYEE_ID = 123L;
+	private static final String REMOVED_EMPLOYEE_STATUS = "REMOVED";
 
-	private PositionManager positionManager = new EmployeeConfiguration().positionManager();
+	private PositionManager positionManager = new PositionConfiguration().positionManager();
 	private EmployeeManager employeeManager = new EmployeeConfiguration().employeeManager(positionManager);
 
-	private EmployeePreparer given = new EmployeePreparer(employeeManager, positionManager);
-	private CommandPreparer givenCommand = new CommandPreparer();
+	private EmployeeCommandPreparer givenCommand = new EmployeeCommandPreparer();
+	private PositionPreparer givenPosition = new PositionPreparer(positionManager);
+	private EmployeePreparer given = new EmployeePreparer(employeeManager, givenPosition);
 
-	@Test
-	public void shouldAddPosition() {
-		// given a valid AddPositionCommand
-		AddPositionCommand command = givenCommand.validAddPositionCommand();
+	private PositionId positionId;
 
-		// when we add a position to the system
-		positionManager.addPosition(command);
-
-		// then the position exists in the system
-		List<PositionDto> positionDtos = new LinkedList<>(positionManager.listPositions());
-		assertThat(positionDtos.size()).isEqualTo(1);
-		assertThat(positionDtos.get(0).getTitle()).isEqualTo(command.getTitle());
-	}
-
-	@Test
-	public void shouldNotAddPositionWithoutTitle() {
-		// given an empty command
-		AddPositionCommand command = new AddPositionCommand();
-
-		// when we try to add an employee
-		Throwable thrown = catchThrowable(() -> positionManager.addPosition(command));
-
-		// then system throws exception
-		assertThat(thrown).isInstanceOf(InvalidCommandException.class);
-	}
-
-	@Test
-	public void shouldNotAddPositionWithInvalidData() {
-		// given a command with invalid data
-		AddPositionCommand command = givenCommand.validAddPositionCommand();
-		command.setTitle("");
-
-		Throwable thrown = catchThrowable(() -> positionManager.addPosition(command));
-
-		// then system throws exception
-		assertThat(thrown).isInstanceOf(InvalidCommandException.class);
-	}
-
-	@Test
-	public void shouldListPositions() {
-		// given two Positions added to the system
-		AddPositionCommand command1 = givenCommand.validAddPositionCommand();
-		positionManager.addPosition(command1);
-		AddPositionCommand command2 = givenCommand.anotherValidAddPositionCommand();
-		positionManager.addPosition(command2);
-
-		// when we list Positions that exist in the system
-		List<PositionDto> positionDtos = new LinkedList<>(positionManager.listPositions());
-
-		// then system returns a list of two positions
-		assertThatPositionDtosReflectAddCommands(positionDtos, command1, command2);
-	}
-
-	@Test
-	public void shouldGetPositionById() {
-		// given the position exists in the system
-		Long positionId = given.newPositionIsAdded().getId();
-
-		// when we try to get the position by id
-		Position position = positionManager.getPositionOrThrow(positionId);
-
-		// then system returns the position
-		assertThat(position).hasNoNullFieldsOrProperties();
-	}
-
-	@Test
-	public void shouldThrownWhenGettingNonexistentPosition() {
-		// given the position doesn't exist in the system
-		assertThat(positionManager.listPositions()).isEmpty();
-
-		// when we try to get the position
-		Throwable thrown = catchThrowable(() -> positionManager.getPositionOrThrow(NON_EXISTENT_POSITION_ID));
-
-		// then system throws exception
-		assertThat(thrown).isInstanceOf(PositionNotFoundException.class);
-	}
-
-	@Test
-	public void shouldEditPosition() {
-		// given a Position that exists within the system
-		positionManager.addPosition(givenCommand.validAddPositionCommand());
-		PositionDto positionDto = new LinkedList<>(positionManager.listPositions()).getFirst();
-		// and an EditPositionCommand to edit that position
-		EditPositionCommand command = givenCommand.editPositionCommandFromPositionDto(positionDto);
-		String newTitle = "Barista";
-		command.setTitle(newTitle);
-
-		// when we edit the Position
-		positionManager.editPosition(command, positionDto.getId());
-
-		// then the system reflects the edits we made
-		PositionDto positionDtoAfter = new LinkedList<>(positionManager.listPositions()).getFirst();
-		assertThat(positionDtoAfter.getTitle()).isEqualTo(newTitle);
-	}
-
-	@Test
-	public void shouldRemovePosition() {
-		// given a Position exists within the system
-		positionManager.addPosition(givenCommand.validAddPositionCommand());
-		PositionDto positionDto = new LinkedList<>(positionManager.listPositions()).getFirst();
-
-		// when we remove the Position
-		positionManager.removePosition(positionDto.getId());
-
-		// then the Position is no longer available in the system
-		assertThat(catchThrowable(() -> positionManager.getPositionOrThrow(positionDto.getId())))
-				.isInstanceOf(PositionNotFoundException.class);
-	}
-
-	@Test
-	public void shouldNotListRemovedPositions() {
-		// given a Position that was removed from the system
-		positionManager.addPosition(givenCommand.validAddPositionCommand());
-		PositionDto positionDto = new LinkedList<>(positionManager.listPositions()).getFirst();
-		positionManager.removePosition(positionDto.getId());
-		assertThat(catchThrowable(() -> positionManager.getPositionOrThrow(positionDto.getId())))
-				.isInstanceOf(PositionNotFoundException.class);
-
-		// when we list Positions that are available in the system
-		Collection<PositionDto> positionDtos = positionManager.listPositions();
-
-		// the removed position is not shown
-		assertThat(positionDtos).isEmpty();
+	@Before
+	public void setUp() throws Exception {
+		positionId = givenPosition.newPositionIsAdded().getId();
 	}
 
 	@Test
 	public void shouldAddEmployee() {
-		// these steps, although lengthy, are shown here to explicitly present the employee creation flow
 		// given a position exists in the system
-		PositionDto positionDto = given.newPositionIsAdded();
-		// we get an id of the desired position
-		Long positionId = positionDto.getId();
+		PositionDto positionDto = givenPosition.newPositionIsAdded();
 		// and given a valid AddEmployeeCommand referencing the position
-		AddEmployeeCommand command = givenCommand.validAddEmployeeCommand(positionId);
+		AddEmployeeCommand command = givenCommand.validAddEmployeeCommand(positionDto.getId());
 
 		// when we add an employee
 		employeeManager.addEmployee(command);
@@ -182,10 +66,7 @@ public class EmployeeAcceptanceTest {
 	@Test
 	public void shouldNotAddEmployeeWithInvalidData() {
 		// given a command with invalid data
-		AddEmployeeCommand command = givenCommand.validAddEmployeeCommand();
-		command.setFirstName("");
-		command.setLastName("");
-		command.setPositionId(null);
+		AddEmployeeCommand command = givenCommand.invalidAddEmployeeCommand();
 
 		// when we try to add an employee
 		Throwable thrown = catchThrowable(() -> employeeManager.addEmployee(command));
@@ -197,11 +78,7 @@ public class EmployeeAcceptanceTest {
 	@Test
 	public void shouldNotAddEmployeeWithNonexistentPosition() {
 		// given the position is not in the system
-		assertThat(catchThrowable(() -> positionManager.getPositionOrThrow(NON_EXISTENT_POSITION_ID)))
-				.isInstanceOf(PositionNotFoundException.class);
-		// and a command that refers to that nonexistent position
-		AddEmployeeCommand command = givenCommand.validAddEmployeeCommand();
-		command.setPositionId(NON_EXISTENT_POSITION_ID);
+		AddEmployeeCommand command = givenCommand.validAddEmployeeCommand(givenCommand.nonExistentPositionId());
 
 		// when we try to add an employee
 		Throwable thrown = catchThrowable(() -> employeeManager.addEmployee(command));
@@ -211,9 +88,34 @@ public class EmployeeAcceptanceTest {
 	}
 
 	@Test
+	public void shouldGetEmployee() {
+		// given an employee is available in the system
+		PositionId positionId = givenPosition.newPositionIsAdded().getId();
+		AddEmployeeCommand command = givenCommand.validAddEmployeeCommand(positionId);
+		EmployeeId employeeId = given.newEmployeeIsAdded(command).getId();
+
+		// when we try to query the employee
+		EmployeeDto employeeDto = employeeManager.getEmployee(employeeId);
+
+		// then the employee is fetched
+		assertThatEmployeeDtosReflectAddCommands(Collections.singletonList(employeeDto), command);
+	}
+
+	@Test
+	public void shouldThrowWhenGettingNonexistentEmployee() {
+		// given the employee does not exist in the system
+		assertThat(employeeManager.listEmployees()).isEmpty();
+
+		// when we try to query the employee
+		Throwable thrown = catchThrowable(() -> employeeManager.getEmployee(givenCommand.nonExistentEmployeeId()));
+
+		// then an exception is thrown
+		assertThat(thrown).isInstanceOf(EmployeeNotFoundException.class);
+	}
+
+	@Test
 	public void shouldListEmployees() {
-		// given the employee exists in the system
-		Long positionId = given.newPositionIsAdded().getId();
+		// given the employees exist in the system
 		AddEmployeeCommand command1 = givenCommand.validAddEmployeeCommand(positionId);
 		AddEmployeeCommand command2 = givenCommand.anotherValidAddEmployeeCommand(positionId);
 		employeeManager.addEmployee(command1);
@@ -227,50 +129,140 @@ public class EmployeeAcceptanceTest {
 	}
 
 	@Test
-	public void shouldGetEmployeeById() {
+	public void shouldEditEmployee() {
 		// given the employee exists in the system
-		Long positionId = given.newPositionIsAdded().getId();
-		EmployeeDto employeeDto = given.newEmployeeIsAdded(positionId);
+		EmployeeDto employeeDtoBefore = given.newEmployeeIsAdded();
+		EditEmployeeCommand command = givenCommand.editEmployeeCommandFrom(employeeDtoBefore);
 
-		// when we try to get the employee by id
-		Employee employee = employeeManager.getEmployeeOrThrow(employeeDto.getId());
+		// when we try to edit the employee
+		employeeManager.editEmployee(employeeDtoBefore.getId(), command);
 
-		// then the system returns the employee
-		assertThat(employee).hasNoNullFieldsOrProperties();
+		// then the system reflects the changes
+		Collection<EmployeeDto> employeeDtos = employeeManager.listEmployees();
+		assertThatEmployeeDtosReflectEditCommands(employeeDtos, command);
 	}
 
 	@Test
-	public void shouldThrownWhenGettingNonexistentEmployee() {
-		// given the employee doesn't exist in the system
-		assertThat(employeeManager.listEmployees()).isEmpty();
+	public void shouldThrowWhenEditingEmployeeWithInvalidCommand() {
+		// given the employee exists in the system
+		EmployeeDto employeeDtoBefore = given.newEmployeeIsAdded();
+		// and given an invalid command
+		EditEmployeeCommand command = givenCommand.invalidEditEmployeeCommand();
 
-		// when we try to get the employee by id
-		Throwable thrown = catchThrowable(() -> employeeManager.getEmployeeOrThrow(NON_EXISTENT_EMPLOYEE_ID));
+		// when we try to edit the employee
+		Throwable thrown = catchThrowable(() -> employeeManager.editEmployee(employeeDtoBefore.getId(), command));
 
-		// then the system throws exception
+		// then an exception is thrown
+		assertThat(thrown).isInstanceOf(InvalidCommandException.class);
+	}
+
+	@Test
+	public void shouldThrowWhenEditingEmployeeWithNonexistentPosition() {
+		// given the employee exists in the system
+		EmployeeDto employeeDto = given.newEmployeeIsAdded();
+		// and given a command referencing a nonexistent position
+		EditEmployeeCommand command = givenCommand.editEmployeeCommandFrom(employeeDto);
+		command.setPositionId(givenCommand.nonExistentPositionId());
+
+		// when we try to edit the employee
+		Throwable thrown = catchThrowable(() -> employeeManager.editEmployee(employeeDto.getId(), command));
+
+		// then an exception is thrown
+		assertThat(thrown).isInstanceOf(PositionNotFoundException.class);
+	}
+
+	@Test
+	public void shouldThrowWhenEditingEmployeeWithRemovedPosition() {
+		// given the employee exists in the system
+		PositionId positionId = givenPosition.newPositionIsAdded().getId();
+		EmployeeDto employeeDto = given.newEmployeeIsAdded(positionId);
+		// and a command referencing a removed position
+		positionManager.removePosition(positionId);
+		EditEmployeeCommand command = givenCommand.editEmployeeCommandFrom(employeeDto);
+
+		// when we try to assign the removed position by editing the employee
+		Throwable thrown = catchThrowable(() -> employeeManager.editEmployee(employeeDto.getId(), command));
+
+		// then an exception is thrown
+		assertThat(thrown).isInstanceOf(PositionNotAvailableException.class);
+	}
+
+	@Test
+	public void shouldthrowWhenEditingNonexistentEmployee() {
+		// given the employee does not exist in the system
+		PositionId positionId = givenPosition.newPositionIsAdded().getId();
+		assertThat(catchThrowable(() -> employeeManager.getEmployee(givenCommand.nonExistentEmployeeId()))).isInstanceOf(EmployeeNotFoundException.class);
+
+		// when we try to edit the employee
+		Throwable thrown = catchThrowable(() -> employeeManager.editEmployee(givenCommand.nonExistentEmployeeId(), givenCommand.validEditEmployeeCommand(positionId)));
+
+		// then an exception is thrown
 		assertThat(thrown).isInstanceOf(EmployeeNotFoundException.class);
 	}
 
-	private void assertThatPositionDtosReflectAddCommands(Collection<PositionDto> dtos, AddPositionCommand... commands) {
-		assertThat(dtos.size()).isEqualTo(commands.length);
-		assertThat(dtos.stream())
-				.allMatch(dto -> Arrays.stream(commands)
-						.anyMatch(positionDtoReflectsAddPositionCommand(dto)));
+	@Test
+	public void shouldRemoveEmployee() {
+		// given the employee exists in the system
+		EmployeeId employeeId = given.newEmployeeIsAdded().getId();
+
+		// when we try to remove the employee
+		employeeManager.removeEmployee(employeeId);
+
+		// then the employee has status REMOVED
+		EmployeeDto employeeDto = employeeManager.getEmployee(employeeId);
+		assertThat(employeeDto.getStatus()).isEqualTo(REMOVED_EMPLOYEE_STATUS);
 	}
 
-	private Predicate<AddPositionCommand> positionDtoReflectsAddPositionCommand(PositionDto positionDto) {
-		return command -> positionDto.getTitle().equals(command.getTitle());
+	@Test
+	public void shouldThrowWhenRemovingNonexistentEmployee() {
+		// given the employee does not exist in the system
+		assertThat(catchThrowable(() -> employeeManager.getEmployee(givenCommand.nonExistentEmployeeId()))).isInstanceOf(EmployeeNotFoundException.class);
+
+		// when we try to remove the employee
+		Throwable thrown = catchThrowable(() -> employeeManager.removeEmployee(givenCommand.nonExistentEmployeeId()));
+
+		// then an exception is thrown
+		assertThat(thrown).isInstanceOf(EmployeeNotFoundException.class);
+	}
+
+	@Test
+	public void shouldNotListRemovedEmployees() {
+		// given the employee was removed from the system
+		EmployeeId employeeId = given.newEmployeeIsAdded().getId();
+		employeeManager.removeEmployee(employeeId);
+
+		// when we list employees
+		Collection<EmployeeDto> employeeDtos = employeeManager.listEmployees();
+
+		// then the employee does not show up on the list
+		assertThat(
+				employeeDtos.stream()
+						.filter(employeeDto -> employeeDto.getId().equals(employeeId))
+		).isEmpty();
 	}
 
 	private void assertThatEmployeeDtosReflectAddCommands(Collection<EmployeeDto> dtos, AddEmployeeCommand... commands) {
 		assertThat(dtos.size()).isEqualTo(commands.length);
-		assertThat(dtos.stream())
-				.allMatch(dto -> Arrays.stream(commands)
-						.anyMatch(employeeDtoReflectsAddEmployeeCommand(dto)));
+		assertThat(Arrays.stream(commands))
+				.allMatch(command -> dtos.stream()
+						.anyMatch(employeeDtoReflectsAddEmployeeCommand(command)));
 	}
 
-	private Predicate<AddEmployeeCommand> employeeDtoReflectsAddEmployeeCommand(EmployeeDto employeeDto) {
-		return command -> employeeDto.getFirstName().equals(command.getFirstName())
+	private Predicate<EmployeeDto> employeeDtoReflectsAddEmployeeCommand(AddEmployeeCommand command) {
+		return employeeDto -> employeeDto.getFirstName().equals(command.getFirstName())
+				&& employeeDto.getLastName().equals(command.getLastName())
+				&& employeeDto.getPosition().getId().equals(command.getPositionId());
+	}
+
+	private void assertThatEmployeeDtosReflectEditCommands(Collection<EmployeeDto> dtos, EditEmployeeCommand... commands) {
+		assertThat(dtos.size()).isEqualTo(commands.length);
+		assertThat(Arrays.stream(commands))
+				.allMatch(command -> dtos.stream()
+						.anyMatch(employeeDtoReflectsEditEmployeeCommand(command)));
+	}
+
+	private Predicate<EmployeeDto> employeeDtoReflectsEditEmployeeCommand(EditEmployeeCommand command) {
+		return employeeDto -> employeeDto.getFirstName().equals(command.getFirstName())
 				&& employeeDto.getLastName().equals(command.getLastName())
 				&& employeeDto.getPosition().getId().equals(command.getPositionId());
 	}

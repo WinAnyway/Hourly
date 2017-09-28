@@ -1,12 +1,13 @@
-package pl.przygudzki.hourly.employee.dto;
+package pl.przygudzki.hourly.position.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import pl.przygudzki.hourly.position.PositionId;
 
 @RequiredArgsConstructor
 @Getter
 public class PositionNotFoundException extends RuntimeException {
 
-	private final Long positionId;
+	private final PositionId positionId;
 
 }

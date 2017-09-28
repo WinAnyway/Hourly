@@ -7,11 +7,11 @@ import pl.przygudzki.hourly.position.PositionId;
 
 @Getter
 @Setter
-public class AddEmployeeCommand implements Validatable {
+public class EditEmployeeCommand implements Validatable {
 
+	private PositionId positionId;
 	private String firstName;
 	private String lastName;
-	private PositionId positionId;
 
 	@Override
 	public void validate(ValidationErrors errors) {

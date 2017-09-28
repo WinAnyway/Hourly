@@ -2,49 +2,109 @@ package pl.przygudzki.hourly.shift;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import java.time.LocalDateTime;
+import pl.przygudzki.hourly.shift.dto.AddShiftCommand;
+import pl.przygudzki.hourly.shift.dto.EditShiftCommand;
+import pl.przygudzki.hourly.shift.dto.ShiftDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 public class ShiftTest {
 
+	private static final String AVAILABLE_STATUS = "AVAILABLE";
+	private static final String REMOVED_STATUS = "REMOVED";
 
-	private CreateShiftCommand command;
+	private Shift shift;
+
+	private CommandPreparer given = new CommandPreparer();
+
+	private ShiftDtoBuilder dtoBuilder = new ShiftDtoBuilder();
+
+	private AddShiftCommand addCommand;
+	private EditShiftCommand editCommand;
 
 	@Before
 	public void setUp() throws Exception {
-		command = prepareCreateShiftCommand();
+		addCommand = given.validAddShiftCommand();
+		editCommand = given.validEditShiftCommand();
+		shift = Shift.create(addCommand);
 	}
 
 	@Test
 	public void shouldCreateShift() {
-		Shift shift = Shift.create(command);
-		assertThat(shift).isNotNull();
+		shift = Shift.create(addCommand);
+
+		assertThat(shift).hasNoNullFieldsOrProperties();
+	}
+
+	@Test
+	public void shouldStoreDataOnCreate() {
+		shift = Shift.create(addCommand);
+
+		ShiftDto shiftDto = buildShiftDto(shift);
+
+		assertThat(shiftDto.getStartDate()).isEqualTo(addCommand.getStartDate());
+		assertThat(shiftDto.getEndDate()).isEqualTo(addCommand.getEndDate());
+	}
+
+	@Test
+	public void shouldAssignAvailableStatusOnCreate() {
+		shift = Shift.create(addCommand);
+
+		ShiftDto shiftDto = buildShiftDto(shift);
+
+		assertThat(shiftDto.getStatus()).isEqualTo(AVAILABLE_STATUS);
 	}
 
 	@Test
 	public void shouldGenerateUniqueIds() {
-		Shift shift = Shift.create(command);
-		Shift otherShift = Shift.create(command);
+		Shift shift = Shift.create(addCommand);
+		Shift otherShift = Shift.create(addCommand);
+
 		assertThat(shift.getId().equals(otherShift.getId())).isFalse();
 	}
 
 	@Test
-	public void shouldThrowExceptionWhenCreatingShiftWithStartDateAfterEndDate() {
-		command.setStartDate(LocalDateTime.of(2017, 7, 1, 16, 0));
-		command.setEndDate(LocalDateTime.of(2017, 7, 1, 12, 0));
-		Throwable thrown = catchThrowable(() -> Shift.create(command));
+	public void shouldThrowExceptionOnCreateWhenDatesAreOutOfOrder() {
+		addCommand = given.addCommandWithDatesOutOfOrder();
+
+		Throwable thrown = catchThrowable(() -> Shift.create(addCommand));
+
 		assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
 		assertThat(thrown).hasMessage("startDate must be earlier than endDate");
 	}
 
-	private CreateShiftCommand prepareCreateShiftCommand() {
-		CreateShiftCommand command = new CreateShiftCommand();
-		command.setStartDate(LocalDateTime.of(2017, 7, 1, 12, 0));
-		command.setEndDate(LocalDateTime.of(2017, 7, 1, 16, 0));
-		return command;
+	@Test
+	public void shouldStoreNewDataOnEdit() {
+		shift.edit(editCommand);
+
+		ShiftDto shiftDto = buildShiftDto(shift);
+
+		assertThat(shiftDto.getStartDate()).isEqualTo(editCommand.getStartDate());
+		assertThat(shiftDto.getEndDate()).isEqualTo(editCommand.getEndDate());
+	}
+
+	@Test
+	public void shouldThrowExceptionOnEditWhenDatesAreOutOfOrder() {
+		editCommand = given.editCommandWithDatesOutOfOrder();
+
+		Throwable thrown = catchThrowable(() -> shift.edit(editCommand));
+
+		assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
+		assertThat(thrown).hasMessage("startDate must be earlier than endDate");
+	}
+
+	@Test
+	public void shouldAssignRemovedStatusOnRemove() {
+		shift.remove();
+
+		ShiftDto shiftDto = buildShiftDto(shift);
+		assertThat(shiftDto.getStatus()).isEqualTo(REMOVED_STATUS);
+	}
+
+	private ShiftDto buildShiftDto(Shift shift) {
+		shift.export(dtoBuilder);
+		return dtoBuilder.build();
 	}
 
 }

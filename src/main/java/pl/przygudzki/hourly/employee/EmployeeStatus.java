@@ -1,7 +1,7 @@
 package pl.przygudzki.hourly.employee;
 
-enum PositionStatus {
+enum EmployeeStatus {
+	REMOVED, AVAILABLE
 
-	AVAILABLE, REMOVED
 
 }

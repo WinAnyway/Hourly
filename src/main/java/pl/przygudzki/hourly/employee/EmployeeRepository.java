@@ -7,7 +7,7 @@ interface EmployeeRepository {
 
 	void put(Employee employee);
 
-	Optional<Employee> get(EmployeeId of);
+	Optional<Employee> get(EmployeeId id);
 
 	List<Employee> getAll();
 
